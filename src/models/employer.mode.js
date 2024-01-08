@@ -65,6 +65,40 @@ const EmployerSchema = new mongoose.Schema(
 
 const Employer = mongoose.model('employer', EmployerSchema);
 
+const EmployerPostSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: v4,
+    },
+    jobTitle: String,
+    jobCategory: Array,
+    salaryTo: Number,
+    expFrom: Number,
+    expTo: Number,
+    jobLocation: String,
+    jobType: String,
+    workMode: String,
+    education: String,
+    department: String,
+    industryType: String,
+    role: String,
+    no_Of_Openings: String,
+    noticePeriod: String,
+    jobDescription: String,
+    skills: String,
+    salaryType: String,
+    userId: String,
+    active: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { timestamps: true }
+);
+const EmployerJobPost = mongoose.model('employerpost', EmployerPostSchema);
+
 module.exports = {
   Employer,
+  EmployerJobPost,
 };

@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const { Employer } = require('../models/employer.mode');
+const { Employer, EmployerJobPost } = require('../models/employer.mode');
 const bcrypt = require('bcryptjs');
 
 const createEmployer = async (req) => {
@@ -43,4 +43,27 @@ const loginWithPasswordAndMobile = async (req) => {
   return finbyMobile;
 };
 
-module.exports = { createEmployer, setPassword, loginWithPasswordAndMobile };
+const CreateEmployerJobPost = async (req) => {
+  const body = req.body;
+  const empId = req.userId;
+  let data = {
+    ...body,
+    ...{ userId: empId },
+  };
+  const creations = await EmployerJobPost.create(data);
+  return creations;
+};
+
+const getEmployerPost = async (req) => {
+  let empId = req.userId;
+  let values = await EmployerJobPost.aggregate([
+    {
+      $match: {
+        userId: empId,
+      },
+    },
+  ]);
+  return values;
+};
+
+module.exports = { createEmployer, setPassword, loginWithPasswordAndMobile, CreateEmployerJobPost, getEmployerPost };
