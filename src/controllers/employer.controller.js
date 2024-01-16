@@ -30,4 +30,22 @@ const getEmployerPost = async (req, res) => {
   res.send(data);
 };
 
-module.exports = { createEmployer, setPassword, loginWithPasswordAndMobile, CreateEmployerJobPost, getEmployerPost };
+const getEmployerProfile = async (req, res) => {
+  const data = await EmployerService.getEmployerById(req.userId);
+  res.send(data);
+};
+
+const active_inactive_post = async (req, res) => {
+  const data = await EmployerService.active_inactive_post(req);
+  res.send(data);
+};
+
+module.exports = {
+  createEmployer,
+  setPassword,
+  loginWithPasswordAndMobile,
+  CreateEmployerJobPost,
+  getEmployerPost,
+  getEmployerProfile,
+  active_inactive_post,
+};
