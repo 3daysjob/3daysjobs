@@ -66,4 +66,36 @@ const getEmployerPost = async (req) => {
   return values;
 };
 
-module.exports = { createEmployer, setPassword, loginWithPasswordAndMobile, CreateEmployerJobPost, getEmployerPost };
+const getEmployerById = async (id) => {
+  let findEmployer = await Employer.findById(id);
+  if (!findEmployer) {
+    throw new ApiError('Employer not found');
+  }
+  return findEmployer;
+};
+
+const active_inactive_post = async (req) => {
+  let id = req.params.id;
+  console.log(id);
+  let getPostById = await EmployerJobPost.findById(id);
+  if (!getPostById) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Post not found');
+  }
+  if (getPostById.active) {
+    getPostById.active = false;
+  } else {
+    getPostById.active = true;
+  }
+  getPostById.save();
+  return getPostById;
+};
+
+module.exports = {
+  createEmployer,
+  setPassword,
+  loginWithPasswordAndMobile,
+  CreateEmployerJobPost,
+  getEmployerPost,
+  getEmployerById,
+  active_inactive_post,
+};
