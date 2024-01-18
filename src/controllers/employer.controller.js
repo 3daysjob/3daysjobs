@@ -40,6 +40,16 @@ const active_inactive_post = async (req, res) => {
   res.send(data);
 };
 
+const createRecruiterByEmployer = async (req, res) => {
+  const data = await EmployerService.createRecruiterByEmployer(req);
+  res.send(data);
+};
+
+const getRecruiter = async (req, res) => {
+  const data = await EmployerService.getRecruiter(req);
+  res.send(data);
+};
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -48,4 +58,6 @@ module.exports = {
   getEmployerPost,
   getEmployerProfile,
   active_inactive_post,
+  createRecruiterByEmployer,
+  getRecruiter,
 };

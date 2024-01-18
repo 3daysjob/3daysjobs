@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const { Employer, EmployerJobPost } = require('../models/employer.mode');
+const { Employer, EmployerJobPost, Recruiter } = require('../models/employer.mode');
 const bcrypt = require('bcryptjs');
 
 const createEmployer = async (req) => {
@@ -90,6 +90,40 @@ const active_inactive_post = async (req) => {
   return getPostById;
 };
 
+const createRecruiterByEmployer = async (req) => {
+  let empId = req.userId;
+  const { recruiterName, mobileNumber, email, location, password } = req.body;
+  let findByMobile = await Recruiter.findOne({ mobileNumber: mobileNumber });
+  if (findByMobile) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Mobile Number Already Exists');
+  }
+  let findBymail = await Recruiter.findOne({ email: email });
+  if (findBymail) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'E-mail Already Exists');
+  }
+  let hashPWD = await bcrypt.hash(password, 8);
+  let recdata = {
+    recruiterName: recruiterName,
+    mobileNumber: mobileNumber,
+    email: email,
+    location: location,
+    password: hashPWD,
+    empId: empId,
+  };
+  const creations = await Recruiter.create(recdata);
+  return creations;
+};
+
+const getRecruiter = async (req) => {
+  let empId = req.userId;
+  let recruiters = await Recruiter.aggregate([
+    {
+      $match: { empId: empId },
+    },
+  ]);
+  return recruiters;
+};
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -98,4 +132,6 @@ module.exports = {
   getEmployerPost,
   getEmployerById,
   active_inactive_post,
+  createRecruiterByEmployer,
+  getRecruiter,
 };

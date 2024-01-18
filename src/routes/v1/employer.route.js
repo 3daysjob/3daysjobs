@@ -10,5 +10,7 @@ router.route('/employer/post').post(EmpAuth, EmploeryController.CreateEmployerJo
 router.route('/getEmployerPost').get(EmpAuth, EmploeryController.getEmployerPost);
 router.route('/profile').get(EmpAuth, EmploeryController.getEmployerProfile);
 router.route('/active/inactive/post/:id').get(EmploeryController.active_inactive_post);
+router.route('/recruiter/creation').post(EmpAuth, EmploeryController.createRecruiterByEmployer);
+router.route('/getRecruiter').get(EmpAuth, EmploeryController.getRecruiter);
 
 module.exports = router;
