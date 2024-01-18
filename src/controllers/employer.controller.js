@@ -3,6 +3,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const EmployerService = require('../services/employer.service');
 const { generateAuthTokens } = require('../services/token.service');
+const { Employer, EmployerJobPost, Recruiter } = require('../models/employer.mode');
 
 const createEmployer = catchAsync(async (req, res) => {
   const data = await EmployerService.createEmployer(req);
@@ -20,35 +21,49 @@ const loginWithPasswordAndMobile = catchAsync(async (req, res) => {
   res.send({ data, token });
 });
 
-const CreateEmployerJobPost = async (req, res) => {
+const CreateEmployerJobPost = catchAsync(async (req, res) => {
   const data = await EmployerService.CreateEmployerJobPost(req);
   res.send(data);
-};
+});
 
-const getEmployerPost = async (req, res) => {
+const getEmployerPost = catchAsync(async (req, res) => {
   const data = await EmployerService.getEmployerPost(req);
   res.send(data);
-};
+});
 
-const getEmployerProfile = async (req, res) => {
+const getEmployerProfile = catchAsync(async (req, res) => {
   const data = await EmployerService.getEmployerById(req.userId);
   res.send(data);
-};
+});
 
-const active_inactive_post = async (req, res) => {
+const active_inactive_post = catchAsync(async (req, res) => {
   const data = await EmployerService.active_inactive_post(req);
   res.send(data);
-};
+});
 
-const createRecruiterByEmployer = async (req, res) => {
+const createRecruiterByEmployer = catchAsync(async (req, res) => {
+  const { mobileNumber, email } = req.body;
+  let findByMobile = await Recruiter.findOne({ mobileNumber: mobileNumber });
+  let findBymail = await Recruiter.findOne({ email: email });
+  if (findByMobile) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Mobile Number Already Exists');
+  }
+  if (findBymail) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'E-mail Already Exists');
+  }
   const data = await EmployerService.createRecruiterByEmployer(req);
   res.send(data);
-};
+});
 
-const getRecruiter = async (req, res) => {
+const getRecruiter = catchAsync(async (req, res) => {
   const data = await EmployerService.getRecruiter(req);
   res.send(data);
-};
+});
+
+const active_Inactive_Recruiter = catchAsync(async (req, res) => {
+  const data = await EmployerService.active_Inactive_Recruiter(req);
+  res.send(data);
+});
 
 module.exports = {
   createEmployer,
@@ -60,4 +75,5 @@ module.exports = {
   active_inactive_post,
   createRecruiterByEmployer,
   getRecruiter,
+  active_Inactive_Recruiter,
 };

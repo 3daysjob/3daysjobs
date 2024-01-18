@@ -93,14 +93,6 @@ const active_inactive_post = async (req) => {
 const createRecruiterByEmployer = async (req) => {
   let empId = req.userId;
   const { recruiterName, mobileNumber, email, location, password } = req.body;
-  let findByMobile = await Recruiter.findOne({ mobileNumber: mobileNumber });
-  if (findByMobile) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Mobile Number Already Exists');
-  }
-  let findBymail = await Recruiter.findOne({ email: email });
-  if (findBymail) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'E-mail Already Exists');
-  }
   let hashPWD = await bcrypt.hash(password, 8);
   let recdata = {
     recruiterName: recruiterName,
@@ -124,6 +116,21 @@ const getRecruiter = async (req) => {
   return recruiters;
 };
 
+const active_Inactive_Recruiter = async (req) => {
+  let recId = req.params.id;
+  let getRecruiter = await Recruiter.findById(recId);
+  if (!getRecruiter) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Recruiter not found');
+  }
+  if (getRecruiter.active == true) {
+    getRecruiter.active = false;
+  } else {
+    getRecruiter.active = true;
+  }
+  getRecruiter.save();
+  return getRecruiter;
+};
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -134,4 +141,5 @@ module.exports = {
   active_inactive_post,
   createRecruiterByEmployer,
   getRecruiter,
+  active_Inactive_Recruiter,
 };

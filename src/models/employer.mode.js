@@ -100,6 +100,10 @@ const EmployerJobPost = mongoose.model('employerpost', EmployerPostSchema);
 
 const RecruiterSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+      default: v4,
+    },
     recruiterName: String,
     mobileNumber: Number,
     email: String,
