@@ -98,7 +98,26 @@ const EmployerPostSchema = new mongoose.Schema(
 );
 const EmployerJobPost = mongoose.model('employerpost', EmployerPostSchema);
 
+const RecruiterSchema = new mongoose.Schema(
+  {
+    recruiterName: String,
+    mobileNumber: Number,
+    email: String,
+    location: String,
+    password: String,
+    empId: String,
+    active: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { timestamps: true }
+);
+
+const Recruiter = mongoose.model('recruiter', RecruiterSchema);
+
 module.exports = {
   Employer,
   EmployerJobPost,
+  Recruiter,
 };
