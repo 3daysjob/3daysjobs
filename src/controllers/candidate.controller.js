@@ -11,7 +11,8 @@ const createCandidate = catchAsync(async (req, res) => {
 
 const UpdateCandidateVerification = catchAsync(async (req, res) => {
   const data = await Candidateervice.UpdateCandidateVerification(req);
-  res.send(data);
+  let token = await generateAuthTokens(data)
+  res.send(token);
 });
 
 module.exports = {
