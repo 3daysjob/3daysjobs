@@ -134,7 +134,7 @@ const active_Inactive_Recruiter = async (req) => {
 const guestCandidates = async (req) => {
   const { category } = req.body;
   let cate = [];
-  category.foreach((e) => {
+  category.forEach((e) => {
     if (e == 1) {
       cate.push('VOICE JOBS');
     } else if (e == 2) {
