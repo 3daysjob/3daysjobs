@@ -133,10 +133,26 @@ const active_Inactive_Recruiter = async (req) => {
 
 const guestCandidates = async (req) => {
   const { category } = req.body;
+  let cate = [];
+  category.foreach((e) => {
+    if (e == 1) {
+      cate.push('VOICE JOBS');
+    } else if (e == 2) {
+      cate.push('NON-VOICE JOBS');
+    } else if (e == 3) {
+      cate.push('COLLECTION/DELIVERY JOBS');
+    } else if (e == 4) {
+      cate.push('RETAIL/SHOWROOM JOBS');
+    } else if (e == 5) {
+      cate.push('FIELD SALES JOBS');
+    } else if (e == 6) {
+      category.push('FREE LANCER/PART TIME JOBS');
+    }
+  });
   let values = await EmployerJobPost.aggregate([
     {
       $match: {
-        jobCategory: { $in: category },
+        jobCategory: { $in: cate },
       },
     },
   ]);
