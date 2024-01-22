@@ -131,6 +131,18 @@ const active_Inactive_Recruiter = async (req) => {
   return getRecruiter;
 };
 
+const guestCandidates = async (req) => {
+  const { category } = req.body;
+  let values = await EmployerJobPost.aggregate([
+    {
+      $match: {
+        jobCategory: { $in: category },
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -142,4 +154,5 @@ module.exports = {
   createRecruiterByEmployer,
   getRecruiter,
   active_Inactive_Recruiter,
+  guestCandidates,
 };

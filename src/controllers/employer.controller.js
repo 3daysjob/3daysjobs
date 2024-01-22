@@ -65,6 +65,11 @@ const active_Inactive_Recruiter = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const guestCandidates = catchAsync(async (req, res) => {
+  const data = await EmployerService.guestCandidates(req);
+  res.send(data);
+});
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -76,4 +81,5 @@ module.exports = {
   createRecruiterByEmployer,
   getRecruiter,
   active_Inactive_Recruiter,
+  guestCandidates,
 };
