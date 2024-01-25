@@ -2,6 +2,9 @@ const express = require('express');
 const EmploeryController = require('../../controllers/employer.controller');
 const router = express.Router();
 const EmpAuth = require('../../middlewares/EmployerAuth');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage }).single('file');
 
 router.route('/').post(EmploeryController.createEmployer);
 router.route('/set-password').post(EmploeryController.setPassword);
@@ -13,6 +16,7 @@ router.route('/active/inactive/post/:id').get(EmploeryController.active_inactive
 router.route('/recruiter/creation').post(EmpAuth, EmploeryController.createRecruiterByEmployer);
 router.route('/getRecruiter').get(EmpAuth, EmploeryController.getRecruiter);
 router.route('/active/inactive/recruiter/:id').get(EmploeryController.active_Inactive_Recruiter);
-router.route('/guestCandidates').post(EmploeryController.guestCandidates)
+router.route('/guestCandidates').post(EmploeryController.guestCandidates);
+router.route('/profileImageUpdate').post(upload, EmpAuth, EmploeryController.profileImageUpdate);
 
 module.exports = router;
