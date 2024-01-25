@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const { Employer, EmployerJobPost, Recruiter } = require('../models/employer.mode');
 const bcrypt = require('bcryptjs');
-
+const AWS = require('aws-sdk');
 const createEmployer = async (req) => {
   const body = req.body;
   let creations = await Employer.create(body);
@@ -159,6 +159,37 @@ const guestCandidates = async (req) => {
   return values;
 };
 
+const profileImageUpdate = async (req) => {
+  let id = req.userId;
+  let findEmp = await Employer.findById(id);
+  if (!findEmp) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'NOT FOUND');
+  }
+  if (req.file) {
+    const s3 = new AWS.S3({
+      accessKeyId: 'AKIA4AF3QDOMAV5VNQNL',
+      secretAccessKey: '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',
+      region: 'ap-south-1',
+    });
+    let params = {
+      Bucket: '3daysjob',
+      Key: req.file.originalname,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype,
+    };
+    return new Promise((resolve, reject) => {
+      s3.upload(params, async (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          let resumeUploaded = await Employer.findByIdAndUpdate({ _id: id }, { ProfileImg: res.Location }, { new: true });
+          resolve(resumeUploaded);
+        }
+      });
+    });
+  }
+};
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -171,4 +202,5 @@ module.exports = {
   getRecruiter,
   active_Inactive_Recruiter,
   guestCandidates,
+  profileImageUpdate,
 };

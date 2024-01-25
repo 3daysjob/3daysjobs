@@ -59,6 +59,9 @@ const EmployerSchema = new mongoose.Schema(
     password: {
       type: String,
     },
+    ProfileImg:{
+      type: String,
+    }
   },
   { timestamps: true }
 );
