@@ -18,5 +18,7 @@ router.route('/getRecruiter').get(EmpAuth, EmploeryController.getRecruiter);
 router.route('/active/inactive/recruiter/:id').get(EmploeryController.active_Inactive_Recruiter);
 router.route('/guestCandidates').post(EmploeryController.guestCandidates);
 router.route('/profileImageUpdate').post(upload, EmpAuth, EmploeryController.profileImageUpdate);
+router.route('/create/locations').post(EmpAuth,EmploeryController.createEmployerLocations);
+router.route('/getAllLocations').get(EmpAuth,EmploeryController.getAllLLocations);
 
 module.exports = router;

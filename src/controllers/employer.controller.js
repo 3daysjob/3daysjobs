@@ -75,6 +75,16 @@ const profileImageUpdate = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const createEmployerLocations = catchAsync(async(req,res)=>{
+  const data = await EmployerService.createEmployerLocations(req);
+  res.send(data)
+});
+
+const getAllLLocations = catchAsync(async(req,res) =>{
+  const data = await EmployerService.getAllLLocations(req);
+  res.send(data)
+})
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -88,4 +98,6 @@ module.exports = {
   active_Inactive_Recruiter,
   guestCandidates,
   profileImageUpdate,
+  createEmployerLocations,
+  getAllLLocations
 };

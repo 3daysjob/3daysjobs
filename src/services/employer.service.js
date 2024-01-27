@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const { Employer, EmployerJobPost, Recruiter } = require('../models/employer.mode');
+const { Employer, EmployerJobPost, Recruiter, EmployerLocation } = require('../models/employer.mode');
 const bcrypt = require('bcryptjs');
 const AWS = require('aws-sdk');
 const createEmployer = async (req) => {
@@ -190,6 +190,28 @@ const profileImageUpdate = async (req) => {
   }
 };
 
+const createEmployerLocations = async (req) => {
+  let empId = req.userId;
+  let datas = {
+    ...req.body,
+    ...{ empId: empId },
+  };
+  let create = await EmployerLocation.create(datas);
+  return create;
+};
+
+const getAllLLocations = async (req) => {
+  let empId = req.userId;
+  let values = await EmployerLocation.aggregate([
+    {
+      $match: {
+        empId: empId,
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -203,4 +225,6 @@ module.exports = {
   active_Inactive_Recruiter,
   guestCandidates,
   profileImageUpdate,
+  createEmployerLocations,
+  getAllLLocations
 };

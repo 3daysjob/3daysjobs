@@ -123,8 +123,29 @@ const RecruiterSchema = new mongoose.Schema(
 
 const Recruiter = mongoose.model('recruiter', RecruiterSchema);
 
+const EmployerLocationSchema = new mongoose.Schema({
+  _id:{
+    type:String,
+    default:v4
+  },
+  locationName:{
+    type:String
+  },
+  locationAddress:{
+    type:String,
+  },
+  active:{
+    type:Boolean,
+    default:true
+  },
+  empId:String
+},{timestamps:true})
+
+
+const EmployerLocation = mongoose.model('employerlocations',EmployerLocationSchema)
 module.exports = {
   Employer,
   EmployerJobPost,
   Recruiter,
+  EmployerLocation
 };
