@@ -28,7 +28,8 @@ const CandidateSchema = new mongoose.Schema(
       type:String
     },
     language:{
-      type:Array
+      type:Array,
+      default:[]
     },
     city:{
       type:String,
@@ -40,7 +41,8 @@ const CandidateSchema = new mongoose.Schema(
       type:Number
     },
     skills:{
-      type:Array
+      type:Array,
+      default:[]
     },
     resumeUrl:{
       type:String
@@ -50,9 +52,12 @@ const CandidateSchema = new mongoose.Schema(
     },
     employment:{
       type:Array,
+      default:[],
     },
     educationDetails:{
-      typ:Array
+      type:Array,
+      default:[],
+
     }
   },
   { timestamps: true }
