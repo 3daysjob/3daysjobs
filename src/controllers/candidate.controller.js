@@ -15,7 +15,13 @@ const UpdateCandidateVerification = catchAsync(async (req, res) => {
   res.send(token);
 });
 
+const UpdateCandidateProfiles = catchAsync(async (req,res)=>{
+  const data = await Candidateervice.UpdateCandidateProfiles(req);
+  res.send(data)
+})
+
 module.exports = {
   createCandidate,
-  UpdateCandidateVerification
+  UpdateCandidateVerification,
+  UpdateCandidateProfiles
 };

@@ -27,7 +27,16 @@ const UpdateCandidateVerification = async (req) => {
   return findCand;
 };
 
+const UpdateCandidateProfiles = async (req)=>{
+  let candId = req.userId
+  let findCand = await Candidate.findById(candId);
+  if(!findCand){
+    throw new ApiError(httpStatus.NOT_FOUND,"Candidate Not Found")
+  }
+}
+
 module.exports = {
   createCandidate,
   UpdateCandidateVerification,
+  UpdateCandidateProfiles
 };

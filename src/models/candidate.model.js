@@ -21,6 +21,39 @@ const CandidateSchema = new mongoose.Schema(
     id: {
       type: Number,
     },
+    dob:{
+      type:String,
+    },
+    gender:{
+      type:String
+    },
+    language:{
+      type:Array
+    },
+    city:{
+      type:String,
+    },
+    state:{
+      type:String
+    },
+    pincode:{
+      type:Number
+    },
+    skills:{
+      type:Array
+    },
+    resumeUrl:{
+      type:String
+    },
+    profileUrl:{
+      type:String
+    },
+    employment:{
+      type:Array,
+    },
+    educationDetails:{
+      typ:Array
+    }
   },
   { timestamps: true }
 );
