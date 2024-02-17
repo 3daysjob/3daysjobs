@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const { Candidate } = require('../models/candidate.model');
+const { Candidate, RecentSearch, Application } = require('../models/candidate.model');
+const { EmployerJobPost } = require('../models/employer.mode');
 const AWS = require('aws-sdk');
 
 const createCandidate = async (req) => {
@@ -88,9 +89,75 @@ const CandidateFileUpload = async (req) => {
   }
 };
 
+const recentSearch = async (req) => {
+  let userId = req.userId;
+  let findCand = await Candidate.findById(userId);
+  if (!findCand) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Candidate Not Found');
+  }
+  let creation = await RecentSearch.create({ ...req.body, ...{ userId: userId } });
+  return creation;
+};
+
+const getRecentSearch = async (req) => {
+  let userId = req.userId;
+  let findCand = await Candidate.findById(userId);
+  if (!findCand) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Candidate Not Found');
+  }
+  let values = await RecentSearch.aggregate([
+    {
+      $match: { userId, active: true },
+    },
+    { $sort: { createdAt: -1 } },
+    {
+      $limit: 10,
+    },
+  ]);
+  return values;
+};
+
+const getJobPostBasedonSkills = async (req) => {
+  let userId = req.userId;
+  let findCand = await Candidate.findById(userId);
+  if (!findCand) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Candidate Not Found');
+  }
+  if (findCand.skills.length == 0) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Candidate skills not update');
+  }
+  let values = await EmployerJobPost.aggregate([
+    {
+      $match: {
+        jobCategory: { $in: findCand.skills },
+      },
+    },
+  ]);
+  return values;
+};
+
+const applicationsDetails = async (req) => {
+  let userId = req.userId;
+  let findCand = await Candidate.findById(userId);
+  if (!findCand) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Candidate Not Found');
+  }
+  const { jobPostId, type } = req.body;
+  let findjobPost = await EmployerJobPost.findById(jobPostId);
+  if (!findjobPost) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'JobPost Not Found');
+  }
+  let datas = { jobPostId, status: type, candId: userId,empId:findjobPost.userId };
+  return Application.create(datas)
+};
+
 module.exports = {
   createCandidate,
   UpdateCandidateVerification,
   UpdateCandidateProfiles,
   CandidateFileUpload,
+  recentSearch,
+  getRecentSearch,
+  getJobPostBasedonSkills,
+  applicationsDetails,
 };

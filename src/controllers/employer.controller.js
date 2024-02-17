@@ -3,7 +3,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const EmployerService = require('../services/employer.service');
 const { generateAuthTokens } = require('../services/token.service');
-const { Employer, EmployerJobPost, Recruiter } = require('../models/employer.mode');
+const { Employer, EmployerJobPost, Recruiter, EmployerLocation } = require('../models/employer.mode');
 
 const createEmployer = catchAsync(async (req, res) => {
   const data = await EmployerService.createEmployer(req);
@@ -85,6 +85,11 @@ const getAllLLocations = catchAsync(async(req,res) =>{
   res.send(data)
 })
 
+const getjobpostById = catchAsync(async(req,res)=>{
+  const data = await EmployerService.getjobpostById(req);
+  res.send(data);
+})
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -99,5 +104,6 @@ module.exports = {
   guestCandidates,
   profileImageUpdate,
   createEmployerLocations,
-  getAllLLocations
+  getAllLLocations,
+  getjobpostById,
 };
