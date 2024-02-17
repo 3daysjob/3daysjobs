@@ -212,6 +212,15 @@ const getAllLLocations = async (req) => {
   return values;
 };
 
+const getjobpostById = async(req)=>{
+  let findJobpost = await EmployerJobPost.findById(req.params.id);
+  if(!findJobpost){
+    throw new ApiError(httpStatus.BAD_REQUEST, "job post not found")
+  }
+  return findJobpost
+}
+
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -226,5 +235,6 @@ module.exports = {
   guestCandidates,
   profileImageUpdate,
   createEmployerLocations,
-  getAllLLocations
+  getAllLLocations,
+  getjobpostById,
 };
