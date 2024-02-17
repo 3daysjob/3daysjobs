@@ -34,7 +34,7 @@ const UpdateCandidateProfiles = async (req) => {
   if (!findCand) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Candidate Not Found');
   }
-  let profileUpload = await Candidate.findByIdAndUpdate({ _id: candId }, body, { new: true });
+  let profileUpload = await Candidate.findByIdAndUpdate({ _id: candId }, req.body, { new: true });
   return profileUpload;
 };
 
