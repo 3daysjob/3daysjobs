@@ -57,7 +57,6 @@ const CandidateSchema = new mongoose.Schema(
     educationDetails:{
       type:Array,
       default:[],
-
     }
   },
   { timestamps: true }

@@ -20,8 +20,14 @@ const UpdateCandidateProfiles = catchAsync(async (req,res)=>{
   res.send(data)
 })
 
+const CandidateFileUpload= catchAsync(async(req,res)=>{
+  const data = await Candidateervice.CandidateFileUpload(req);
+  res.send(data)
+})
+
 module.exports = {
   createCandidate,
   UpdateCandidateVerification,
-  UpdateCandidateProfiles
+  UpdateCandidateProfiles,
+  CandidateFileUpload
 };
