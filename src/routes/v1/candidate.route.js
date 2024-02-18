@@ -13,5 +13,5 @@ router.route('/candidate/fileUpload').post(Auth, upload, CandidateController.Can
 router.route('/recentsearch').post(Auth, CandidateController.recentSearch);
 router.route('/get/recentsearch').get(Auth, CandidateController.getRecentSearch);
 router.route('/getjobpost/basedonskills').get(Auth, CandidateController.getJobPostBasedonSkills);
-router.route('/applications/details').post(Auth, CandidateController.applicationsDetails)
+router.route('/applications/details').post(Auth, CandidateController.applicationsDetails);
 module.exports = router;
