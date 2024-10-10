@@ -3,19 +3,21 @@ const ApiError = require('../utils/ApiError');
 const { Candidate, RecentSearch, Application } = require('../models/candidate.model');
 const { EmployerJobPost } = require('../models/employer.mode');
 const AWS = require('aws-sdk');
+const { Cities } = require('../models/cities.model');
+const { default: axios } = require('axios');
 
 const createCandidate = async (req) => {
-  let candId = await Candidate.find().count();
-  const { mobileNumber } = req.body;
-  const findCand = await Candidate.findOne({ mobileNumber: mobileNumber });
+  const { email, lat, long } = req.body;
+  const findCand = await Candidate.findOne({ email: email });
   if (findCand) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Mobile number alread in use');
+    return findCand;
+  } else {
+    let data = {
+      ...req.body,
+      ...{ loc: { type: 'Point', coordinates: [parseFloat(lat), parseFloat(long)] } },
+    };
+    return await Candidate.create(data);
   }
-  let data = {
-    mobileNumber: mobileNumber,
-    id: candId + 1,
-  };
-  return await Candidate.create(data);
 };
 
 const UpdateCandidateVerification = async (req) => {
@@ -147,8 +149,31 @@ const applicationsDetails = async (req) => {
   if (!findjobPost) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'JobPost Not Found');
   }
-  let datas = { jobPostId, status: type, candId: userId,empId:findjobPost.userId };
-  return Application.create(datas)
+  let datas = { jobPostId, status: type, candId: userId, empId: findjobPost.userId };
+  return Application.create(datas);
+};
+
+const getCandidateProfile = async (req) => {
+  let userId = req.userId;
+  let findCand = await Candidate.findById(userId);
+  if (!findCand) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Candidate Not Found');
+  } else {
+    return findCand;
+  }
+};
+
+const fetchLocalityByCity = async (req) => {
+  const { Lat, Long } = req.body;
+  const response = await axios.get(
+    `https://api.olamaps.io/places/v1/nearbysearch?layers=venue&types=locality&location=${Lat},${Long}&api_key=MTcI1j4e0oCGn4hBBrQCy3kDri0vUEpRIJbx2YHf&limit=100`
+  );
+  return response.data.predictions;
+};
+
+const fetchCities = async (req) => {
+  const cities = await Cities.find();
+  return cities;
 };
 
 module.exports = {
@@ -160,4 +185,7 @@ module.exports = {
   getRecentSearch,
   getJobPostBasedonSkills,
   applicationsDetails,
+  getCandidateProfile,
+  fetchCities,
+  fetchLocalityByCity,
 };
