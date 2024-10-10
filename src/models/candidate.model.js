@@ -7,8 +7,8 @@ const CandidateSchema = new mongoose.Schema(
       type: String,
       default: v4,
     },
-    mobileNumber: {
-      type: Number,
+    email: {
+      type: String,
     },
     active: {
       type: Boolean,
@@ -18,23 +18,16 @@ const CandidateSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    id: {
-      type: Number,
-    },
     dob: {
       type: String,
     },
     gender: {
       type: String,
     },
-    language: {
-      type: Array,
-      default: [],
-    },
-    city: {
+    prefferedCity: {
       type: String,
     },
-    state: {
+    prefferedLocality: {
       type: String,
     },
     pincode: {
@@ -54,10 +47,50 @@ const CandidateSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    educationDetails: {
+    exp: {
+      type: String,
+    },
+    education: {
+      type: String,
+    },
+    additionalLang: {
       type: Array,
       default: [],
     },
+    loc: {
+      type: Object,
+      default: {
+        types: 'Point',
+        coordinates: [],
+      },
+    },
+    name: {
+      type: String,
+    },
+    step: {
+      type: Number,
+      default: 0,
+    },
+    stepCompleted: {
+      type: Boolean,
+      default: false,
+    },
+    work: {
+      type: String,
+    },
+    mobileNumber: {
+      type: String,
+    },
+    lastSalary: {
+      type: String,
+    },
+    motherTongue: {
+      type: String,
+    },
+    thinks:{
+      type:Array,
+      default:[]
+    }
   },
   { timestamps: true }
 );
@@ -92,7 +125,7 @@ const ApplicatoinsDetailsSchema = new mongoose.Schema(
       type: String,
       default: 'Pending',
     },
-    empId:String,
+    empId: String,
     active: {
       type: Boolean,
       default: v4,
@@ -107,7 +140,7 @@ const ApplicatoinsDetailsSchema = new mongoose.Schema(
 
 const RecentSearch = mongoose.model('recentsearch', recentSearchSchema);
 const Candidate = mongoose.model('candidate', CandidateSchema);
-const Application = mongoose.model('applications',ApplicatoinsDetailsSchema)
+const Application = mongoose.model('applications', ApplicatoinsDetailsSchema);
 
 module.exports = {
   Candidate,

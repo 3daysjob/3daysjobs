@@ -17,6 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const admin = require('firebase-admin');
 const serviceAccount = require('../daysjobs.json');
+const { Cities } = require('./models/cities.model');
 
 const app = express();
 admin.initializeApp({
@@ -56,17 +57,18 @@ passport.use('jwt', jwtStrategy);
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
-app.post('/send-code', async (req, res) => {
-  const { phoneNumber } = req.body;
-  try {
-    const verificationRequest = await authfirebase.signInWithPhoneNumber(phoneNumber);
-    const verificationId = verificationRequest.verificationId;
-    res.status(200).json({ verificationId });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to send verification code' });
-  }
-});
+// app.get('/cities', async (req, res) => {
+//   try {
+//     const filePath = '/home/innovature/Innovature/3daysjobs/src/cities.json';
+//     const fileContent = fs.readFileSync(filePath, 'utf8');
+//     const jsonData = JSON.parse(fileContent);
+//     const creation = await Cities.insertMany(jsonData);
+//     res.status(200).json(creation);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Failed to send verification code' });
+//   }
+// });
 
 // v1 api routes
 app.use('/v1', routes);

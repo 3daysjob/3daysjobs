@@ -4,6 +4,7 @@ const userService = require('./user.service');
 const Token = require('../models/token.model');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
+const { sendOTP } = require('../config/otp.config');
 
 /**
  * Login with username and password
@@ -90,10 +91,16 @@ const verifyEmail = async (verifyEmailToken) => {
   }
 };
 
+const sendOTPService = async (req) => {
+  const { mobileNumber } = req.body;
+  return sendOTP();
+};
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,
   resetPassword,
   verifyEmail,
+  sendOTPService,
 };
