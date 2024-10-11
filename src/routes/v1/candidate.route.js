@@ -17,4 +17,6 @@ router.route('/applications/details').post(Auth, CandidateController.application
 router.route('/profile').get(Auth, CandidateController.getCandidateProfile);
 router.route('/fetch/cities').get(CandidateController.fetchCities);
 router.route('/fetch/locality/ByCity').post(CandidateController.fetchLocalityByCity);
+router.route('/send-otp').post(CandidateController.sentOTP_mail);
+router.route('/verify-otp').post(CandidateController.verifyOTP)
 module.exports = router;

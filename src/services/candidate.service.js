@@ -5,7 +5,9 @@ const { EmployerJobPost } = require('../models/employer.mode');
 const AWS = require('aws-sdk');
 const { Cities } = require('../models/cities.model');
 const { default: axios } = require('axios');
-
+const Emailservice = require('./email.service');
+const { saveOTP } = require('../utils/otpSave');
+const { SaveOTP } = require('../models/otp.model');
 const createCandidate = async (req) => {
   const { email, lat, long } = req.body;
   const findCand = await Candidate.findOne({ email: email });
@@ -176,6 +178,33 @@ const fetchCities = async (req) => {
   return cities;
 };
 
+const sentOTP_mail = async (req) => {
+  const { email } = req.body
+  const OTP = Math.floor(1000 + Math.random() * 9000);
+  await saveOTP({ email, OTP })
+  const emailService = await Emailservice.sentOTP_mail({ email, OTP })
+  return emailService
+}
+
+const verifyOTP = async (req) => {
+  const { OTP, email } = req.body;
+  const findOTP = await SaveOTP.findOne({ email })
+  if (!findOTP) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid e-email")
+  } else if (findOTP.used == true) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid OTP")
+  } else if (findOTP.OTP != OTP) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid OTP")
+  } else {
+    findOTP.used = true,
+      findOTP.save()
+    return { msg: "Verified" }
+  }
+
+
+}
+
+
 module.exports = {
   createCandidate,
   UpdateCandidateVerification,
@@ -188,4 +217,6 @@ module.exports = {
   getCandidateProfile,
   fetchCities,
   fetchLocalityByCity,
+  sentOTP_mail,
+  verifyOTP
 };

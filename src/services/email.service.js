@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const config = require('../config/config');
 const logger = require('../config/logger');
-
+const ejs = require('ejs')
 const transport = nodemailer.createTransport(config.email.smtp);
 /* istanbul ignore next */
 if (config.env !== 'test') {
@@ -55,9 +55,27 @@ If you did not create an account, then ignore this email.`;
   await sendEmail(to, subject, text);
 };
 
+
+const sentOTP_mail = async (data) => {
+  const { email, OTP } = data
+  let sendData = await ejs.renderFile(__dirname + '/otp.ejs', {
+    email: email,
+    OTP: OTP
+  });
+  const msg = {
+    from: config.email.from,
+    to: email,
+    subject: 'Your One-Time Password (OTP) for Secure Login',
+    html: sendData,
+  };
+  return await transport.sendMail(msg);
+}
+
+
 module.exports = {
   transport,
   sendEmail,
   sendResetPasswordEmail,
   sendVerificationEmail,
+  sentOTP_mail
 };

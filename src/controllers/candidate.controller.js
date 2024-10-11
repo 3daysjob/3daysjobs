@@ -62,6 +62,16 @@ const fetchLocalityByCity = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const sentOTP_mail = catchAsync(async (req, res) => {
+  const data = await Candidateervice.sentOTP_mail(req);
+  res.send(data)
+})
+
+const verifyOTP = catchAsync(async (req, res) => {
+  const data = await Candidateervice.verifyOTP(req);
+  res.send(data)
+})
+
 module.exports = {
   createCandidate,
   UpdateCandidateVerification,
@@ -74,4 +84,6 @@ module.exports = {
   getCandidateProfile,
   fetchCities,
   fetchLocalityByCity,
+  sentOTP_mail,
+  verifyOTP
 };
