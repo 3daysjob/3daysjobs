@@ -198,7 +198,8 @@ const verifyOTP = async (req) => {
   } else {
     findOTP.used = true,
       findOTP.save()
-    return { msg: "Verified" }
+    const candidate = await createCandidate(req)
+    return candidate
   }
 
 

@@ -69,7 +69,8 @@ const sentOTP_mail = catchAsync(async (req, res) => {
 
 const verifyOTP = catchAsync(async (req, res) => {
   const data = await Candidateervice.verifyOTP(req);
-  res.send(data)
+  const token = await GeneretaeAuthToken(data);
+  res.send({data, token})
 })
 
 module.exports = {
