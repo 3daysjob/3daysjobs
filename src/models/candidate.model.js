@@ -90,6 +90,10 @@ const CandidateSchema = new mongoose.Schema(
     thinks:{
       type:Array,
       default:[]
+    },
+    categories:{
+      type:Array,
+      default:[]
     }
   },
   { timestamps: true }
