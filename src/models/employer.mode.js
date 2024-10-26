@@ -59,12 +59,13 @@ const EmployerSchema = new mongoose.Schema(
     password: {
       type: String,
     },
-    ProfileImg:{
+    ProfileImg: {
       type: String,
     }
   },
   { timestamps: true }
 );
+EmployerSchema.indexes({ _id: 1, email: 1, companyType: 1, createdAt: -1 });
 
 const Employer = mongoose.model('employer', EmployerSchema);
 
@@ -92,17 +93,17 @@ const EmployerPostSchema = new mongoose.Schema(
     skills: String,
     salaryType: String,
     userId: String,
-    candStatus:{
-      type:String,
-      default:"Pending",
+    candStatus: {
+      type: String,
+      default: "Pending",
     },
-    candAction:{
-      type:Array,
-      default:[]
+    candAction: {
+      type: Array,
+      default: []
     },
-    empAction:{
-      type:Array,
-      default:[],
+    empAction: {
+      type: Array,
+      default: [],
     },
     active: {
       type: Boolean,
@@ -111,6 +112,7 @@ const EmployerPostSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 const EmployerJobPost = mongoose.model('employerpost', EmployerPostSchema);
 
 const RecruiterSchema = new mongoose.Schema(
@@ -136,25 +138,25 @@ const RecruiterSchema = new mongoose.Schema(
 const Recruiter = mongoose.model('recruiter', RecruiterSchema);
 
 const EmployerLocationSchema = new mongoose.Schema({
-  _id:{
-    type:String,
-    default:v4
+  _id: {
+    type: String,
+    default: v4
   },
-  locationName:{
-    type:String
+  locationName: {
+    type: String
   },
-  locationAddress:{
-    type:String,
+  locationAddress: {
+    type: String,
   },
-  active:{
-    type:Boolean,
-    default:true
+  active: {
+    type: Boolean,
+    default: true
   },
-  empId:String
-},{timestamps:true})
+  empId: String
+}, { timestamps: true })
 
 
-const EmployerLocation = mongoose.model('employerlocations',EmployerLocationSchema)
+const EmployerLocation = mongoose.model('employerlocations', EmployerLocationSchema)
 module.exports = {
   Employer,
   EmployerJobPost,

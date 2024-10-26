@@ -3,11 +3,40 @@ const ApiError = require('../utils/ApiError');
 const { Employer, EmployerJobPost, Recruiter, EmployerLocation } = require('../models/employer.mode');
 const bcrypt = require('bcryptjs');
 const AWS = require('aws-sdk');
+const { saveOTP } = require('../utils/otpSave');
+const Emailservice = require('./email.service');
+const { SaveOTP } = require('../models/otp.model');
+
+
 const createEmployer = async (req) => {
   const body = req.body;
+  const findExistEmp = await Employer.findOne({ email: body.email });
+  if (findExistEmp) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Email Account Alreay Exist's")
+  }
   let creations = await Employer.create(body);
-  return creations;
+  const OTP = Math.floor(1000 + Math.random() * 9000);
+  await saveOTP({ email: body.email, OTP })
+
+  const emailService = await Emailservice.sentOTP_mail({ email: body.email, OTP })
+  return { creations, emailService };
 };
+
+const verifyOTP = async (req) => {
+  const { OTP, email } = req.body;
+  const findOTP = await SaveOTP.findOne({ email })
+  if (!findOTP) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid e-email")
+  } else if (findOTP.used == true) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid OTP")
+  } else if (findOTP.OTP != OTP) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid OTP")
+  } else {
+    findOTP.used = true
+    findOTP.save()
+    return { message: "Account Verified Successfully" }
+  }
+}
 
 const findById = async (id) => {
   let findEmployer = await Employer.findById(id);
@@ -18,9 +47,9 @@ const findById = async (id) => {
 };
 
 const setPassword = async (req) => {
-  const { password, id } = req.body;
+  const { password, email } = req.body;
   let hashPWD = await bcrypt.hash(password, 8);
-  let employer = await findById(id);
+  let employer = await Employer.findOne({ email: email });
   if (employer) {
     let setPassword = Employer.findByIdAndUpdate({ _id: employer._id }, { password: hashPWD }, { new: true });
     return setPassword;
@@ -30,8 +59,8 @@ const setPassword = async (req) => {
 };
 
 const loginWithPasswordAndMobile = async (req) => {
-  const { password, mobileNumber } = req.body;
-  let finbyMobile = await Employer.findOne({ mobileNumber: mobileNumber });
+  const { password, email } = req.body;
+  let finbyMobile = await Employer.findOne({ email: email });
   if (!finbyMobile) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Employer Not Found');
   }
@@ -39,7 +68,6 @@ const loginWithPasswordAndMobile = async (req) => {
   if (!passwordMatch) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Password do not match');
   }
-
   return finbyMobile;
 };
 
@@ -212,9 +240,9 @@ const getAllLLocations = async (req) => {
   return values;
 };
 
-const getjobpostById = async(req)=>{
+const getjobpostById = async (req) => {
   let findJobpost = await EmployerJobPost.findById(req.params.id);
-  if(!findJobpost){
+  if (!findJobpost) {
     throw new ApiError(httpStatus.BAD_REQUEST, "job post not found")
   }
   return findJobpost
@@ -237,4 +265,5 @@ module.exports = {
   createEmployerLocations,
   getAllLLocations,
   getjobpostById,
+  verifyOTP,
 };
