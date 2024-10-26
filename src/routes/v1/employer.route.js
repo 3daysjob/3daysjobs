@@ -4,9 +4,9 @@ const router = express.Router();
 const EmpAuth = require('../../middlewares/EmployerAuth');
 const multer = require('multer');
 const storage = multer.memoryStorage();
-const upload = multer({ storage }).single('file');
+const upload = multer({ storage }).single('ProfileImg');
 
-router.route('/').post(EmploeryController.createEmployer);
+router.route('/').post(upload, EmploeryController.createEmployer);
 router.route('/set-password').post(EmploeryController.setPassword);
 router.route('/login').post(EmploeryController.loginWithPasswordAndMobile);
 router.route('/employer/post').post(EmpAuth, EmploeryController.CreateEmployerJobPost);
@@ -18,8 +18,9 @@ router.route('/getRecruiter').get(EmpAuth, EmploeryController.getRecruiter);
 router.route('/active/inactive/recruiter/:id').get(EmploeryController.active_Inactive_Recruiter);
 router.route('/guestCandidates').post(EmploeryController.guestCandidates);
 router.route('/profileImageUpdate').post(upload, EmpAuth, EmploeryController.profileImageUpdate);
-router.route('/create/locations').post(EmpAuth,EmploeryController.createEmployerLocations);
-router.route('/getAllLocations').get(EmpAuth,EmploeryController.getAllLLocations);
+router.route('/create/locations').post(EmpAuth, EmploeryController.createEmployerLocations);
+router.route('/getAllLocations').get(EmpAuth, EmploeryController.getAllLLocations);
 router.route('/:id').get(EmploeryController.getjobpostById);
+router.route('/verify-otp').post(EmploeryController.verifyOTP)
 
 module.exports = router;

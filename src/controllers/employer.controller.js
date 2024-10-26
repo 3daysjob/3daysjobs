@@ -75,19 +75,25 @@ const profileImageUpdate = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-const createEmployerLocations = catchAsync(async(req,res)=>{
+const createEmployerLocations = catchAsync(async (req, res) => {
   const data = await EmployerService.createEmployerLocations(req);
   res.send(data)
 });
 
-const getAllLLocations = catchAsync(async(req,res) =>{
+const getAllLLocations = catchAsync(async (req, res) => {
   const data = await EmployerService.getAllLLocations(req);
   res.send(data)
 })
 
-const getjobpostById = catchAsync(async(req,res)=>{
+const getjobpostById = catchAsync(async (req, res) => {
   const data = await EmployerService.getjobpostById(req);
   res.send(data);
+})
+
+
+const verifyOTP = catchAsync(async (req, res) => {
+  const data = await EmployerService.verifyOTP(req);
+  res.send(data)
 })
 
 module.exports = {
@@ -106,4 +112,5 @@ module.exports = {
   createEmployerLocations,
   getAllLLocations,
   getjobpostById,
+  verifyOTP,
 };
