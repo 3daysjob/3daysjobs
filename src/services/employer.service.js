@@ -6,7 +6,7 @@ const AWS = require('aws-sdk');
 const { saveOTP } = require('../utils/otpSave');
 const Emailservice = require('./email.service');
 const { SaveOTP } = require('../models/otp.model');
-
+const axios = require('axios')
 
 const createEmployer = async (req) => {
   const body = req.body;
@@ -140,6 +140,16 @@ const getRecruiter = async (req) => {
     {
       $match: { empId: empId },
     },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        recruiterName: 1,
+        mobileNumber: 1,
+        email: 1,
+        createdAt: 1
+      }
+    }
   ]);
   return recruiters;
 };
@@ -158,6 +168,12 @@ const active_Inactive_Recruiter = async (req) => {
   getRecruiter.save();
   return getRecruiter;
 };
+
+const updateRecruiterById = async (req) => {
+  const id = req.params.id
+  const update = await Recruiter.findByIdAndUpdate({ _id: id }, req.body, { new: true })
+  return update
+}
 
 const guestCandidates = async (req) => {
   const { category } = req.body;
@@ -220,13 +236,46 @@ const profileImageUpdate = async (req) => {
 
 const createEmployerLocations = async (req) => {
   let empId = req.userId;
+  const { locationName, locationAddress } = req.body
+  const response = await axios.get(
+    `https://api.olamaps.io/places/v1/autocomplete?input=${locationAddress}&api_key=MTcI1j4e0oCGn4hBBrQCy3kDri0vUEpRIJbx2YHf`
+  );
+  let lat
+  let lng
+  if (response.data) {
+    lat = response.data.predictions[0].geometry.location.lat
+    lng = response.data.predictions[0].geometry.location.lng
+  }
+  const location = { type: 'Point', coordinates: [lat, lng] }
   let datas = {
     ...req.body,
-    ...{ empId: empId },
+    ...{ empId: empId, loc: location },
   };
   let create = await EmployerLocation.create(datas);
   return create;
 };
+
+const updateLocationById = async (req) => {
+  const id = req.params.id;
+  const { locationName, locationAddress } = req.body
+  const response = await axios.get(
+    `https://api.olamaps.io/places/v1/autocomplete?input=${locationAddress}&api_key=MTcI1j4e0oCGn4hBBrQCy3kDri0vUEpRIJbx2YHf`
+  );
+  let lat
+  let lng
+  if (response.data) {
+    lat = response.data.predictions[0].geometry.location.lat
+    lng = response.data.predictions[0].geometry.location.lng
+  }
+  const location = { type: 'Point', coordinates: [lat, lng] }
+  let datas = {
+    ...req.body,
+    ...{ loc: location },
+  };
+  let update = await EmployerLocation.findByIdAndUpdate({ _id: id }, datas, { new: true })
+  return update
+
+}
 
 const getAllLLocations = async (req) => {
   let empId = req.userId;
@@ -266,4 +315,6 @@ module.exports = {
   getAllLLocations,
   getjobpostById,
   verifyOTP,
+  updateLocationById,
+  updateRecruiterById,
 };
