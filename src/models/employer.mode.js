@@ -77,6 +77,7 @@ const EmployerPostSchema = new mongoose.Schema(
     },
     jobTitle: String,
     jobCategory: Array,
+    salaryFrom: Number,
     salaryTo: Number,
     expFrom: Number,
     expTo: Number,
@@ -87,12 +88,13 @@ const EmployerPostSchema = new mongoose.Schema(
     department: String,
     industryType: String,
     role: String,
-    no_Of_Openings: String,
+    no_Of_Openings: Number,
     noticePeriod: String,
     jobDescription: String,
     skills: String,
     salaryType: String,
     userId: String,
+    gender: String,
     candStatus: {
       type: String,
       default: "Pending",
@@ -151,6 +153,9 @@ const EmployerLocationSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: true
+  },
+  loc: {
+    type: Object
   },
   empId: String
 }, { timestamps: true })

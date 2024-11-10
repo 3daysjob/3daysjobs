@@ -16,10 +16,12 @@ router.route('/active/inactive/post/:id').get(EmploeryController.active_inactive
 router.route('/recruiter/creation').post(EmpAuth, EmploeryController.createRecruiterByEmployer);
 router.route('/getRecruiter').get(EmpAuth, EmploeryController.getRecruiter);
 router.route('/active/inactive/recruiter/:id').get(EmploeryController.active_Inactive_Recruiter);
+router.route('/update/reccruiter/:id').put(EmploeryController.updateRecruiterById)
 router.route('/guestCandidates').post(EmploeryController.guestCandidates);
 router.route('/profileImageUpdate').post(upload, EmpAuth, EmploeryController.profileImageUpdate);
 router.route('/create/locations').post(EmpAuth, EmploeryController.createEmployerLocations);
 router.route('/getAllLocations').get(EmpAuth, EmploeryController.getAllLLocations);
+router.route('/update/location/:id').put(EmpAuth, EmploeryController.updateLocationById)
 router.route('/:id').get(EmploeryController.getjobpostById);
 router.route('/verify-otp').post(EmploeryController.verifyOTP)
 

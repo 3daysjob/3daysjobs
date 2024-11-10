@@ -96,6 +96,16 @@ const verifyOTP = catchAsync(async (req, res) => {
   res.send(data)
 })
 
+const updateLocationById = catchAsync(async (req, res) => {
+  const data = await EmployerService.updateLocationById(req);
+  res.send(data)
+})
+
+const updateRecruiterById = catchAsync(async (req, res) => {
+  const data = await EmployerService.updateRecruiterById(req);
+  res.send(data)
+})
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -113,4 +123,6 @@ module.exports = {
   getAllLLocations,
   getjobpostById,
   verifyOTP,
+  updateLocationById,
+  updateRecruiterById
 };
