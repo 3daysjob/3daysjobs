@@ -95,6 +95,11 @@ const EmployerPostSchema = new mongoose.Schema(
     salaryType: String,
     userId: String,
     gender: String,
+    postType: String,
+    loc: {
+      type: Object,
+      default: {}
+    },
     candStatus: {
       type: String,
       default: "Pending",
