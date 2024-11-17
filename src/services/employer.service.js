@@ -66,17 +66,30 @@ const loginWithPasswordAndMobile = async (req) => {
   }
   let passwordMatch = await bcrypt.compare(password, finbyMobile.password);
   if (!passwordMatch) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Password do not match');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Password does not match');
   }
   return finbyMobile;
 };
 
 const CreateEmployerJobPost = async (req) => {
   const body = req.body;
+
+  const response = await axios.get(
+    `https://api.olamaps.io/places/v1/autocomplete?input=${body.jobLocation}&api_key=MTcI1j4e0oCGn4hBBrQCy3kDri0vUEpRIJbx2YHf`
+  );
+  let lat
+  let lng
+  if (response.data) {
+    lat = response.data.predictions[0].geometry.location.lat
+    lng = response.data.predictions[0].geometry.location.lng
+  }
+
+  const location = { type: 'Point', coordinates: [lat, lng] }
+
   const empId = req.userId;
   let data = {
     ...body,
-    ...{ userId: empId },
+    ...{ userId: empId, loc: location },
   };
   const creations = await EmployerJobPost.create(data);
   return creations;
@@ -84,12 +97,28 @@ const CreateEmployerJobPost = async (req) => {
 
 const getEmployerPost = async (req) => {
   let empId = req.userId;
+  const { postType } = req.query;
+
+  let postMatch = { active: true }
+
+  if (postType && postType != '' && postType != 'null') {
+    postMatch = {
+      postType: postType
+    }
+  }
+
+
   let values = await EmployerJobPost.aggregate([
     {
       $match: {
         userId: empId,
       },
     },
+    {
+      $match: {
+        $and: [postMatch]
+      }
+    }
   ]);
   return values;
 };
@@ -296,6 +325,7 @@ const getjobpostById = async (req) => {
   }
   return findJobpost
 }
+
 
 
 module.exports = {
