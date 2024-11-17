@@ -18,7 +18,7 @@ const EmployerSchema = new mongoose.Schema(
       type: String,
     },
     employeeSize: {
-      type: Number,
+      type: String,
     },
     mobileNumber: {
       type: Number,
