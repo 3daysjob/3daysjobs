@@ -179,32 +179,82 @@ const fetchCities = async (req) => {
 };
 
 const sentOTP_mail = async (req) => {
-  const { email } = req.body
+  const { email } = req.body;
   const OTP = Math.floor(1000 + Math.random() * 9000);
-  await saveOTP({ email, OTP })
-  const emailService = await Emailservice.sentOTP_mail({ email, OTP })
-  return emailService
-}
+  await saveOTP({ email, OTP });
+  const emailService = await Emailservice.sentOTP_mail({ email, OTP });
+  return emailService;
+};
 
 const verifyOTP = async (req) => {
   const { OTP, email } = req.body;
-  const findOTP = await SaveOTP.findOne({ email })
+  const findOTP = await SaveOTP.findOne({ email });
   if (!findOTP) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid e-email")
-  } else if (findOTP.used == true) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid OTP")
-  } else if (findOTP.OTP != OTP) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid OTP")
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid e-email');
+  } else if (findOTP.used === true) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid OTP');
+  } else if (findOTP.OTP !== OTP) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid OTP');
   } else {
-    findOTP.used = true,
-      findOTP.save()
-    const candidate = await createCandidate(req)
-    return candidate
+    // eslint-disable-next-line no-unused-expressions, no-sequences
+    (findOTP.used = true), findOTP.save();
+    const candidate = await createCandidate(req);
+    return candidate;
   }
+};
 
+const fetchJobsByCandudateId = async (req) => {
+  // const { userId } = req;
+  const jobs = await EmployerJobPost.aggregate([
+    {
+      $match: {
+        active: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'employers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'company',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$company',
+      },
+    },
+  ]);
+  return jobs;
+};
 
-}
-
+const fetchDailyJobsByCandudateId = async (req) => {
+  // const { userId } = req;
+  const jobs = await EmployerJobPost.aggregate([
+    {
+      $match: {
+        active: true,
+        loc: { $ne: null },
+      },
+    },
+    {
+      $lookup: {
+        from: 'employers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'company',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$company',
+      },
+    },
+  ]);
+  return jobs;
+};
 
 module.exports = {
   createCandidate,
@@ -219,5 +269,7 @@ module.exports = {
   fetchCities,
   fetchLocalityByCity,
   sentOTP_mail,
-  verifyOTP
+  verifyOTP,
+  fetchJobsByCandudateId,
+  fetchDailyJobsByCandudateId,
 };
