@@ -1,4 +1,3 @@
-const { types } = require('joi');
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 
@@ -61,7 +60,7 @@ const EmployerSchema = new mongoose.Schema(
     },
     ProfileImg: {
       type: String,
-    }
+    },
   },
   { timestamps: true }
 );

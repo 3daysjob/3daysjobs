@@ -64,14 +64,24 @@ const fetchLocalityByCity = catchAsync(async (req, res) => {
 
 const sentOTP_mail = catchAsync(async (req, res) => {
   const data = await Candidateervice.sentOTP_mail(req);
-  res.send(data)
-})
+  res.send(data);
+});
 
 const verifyOTP = catchAsync(async (req, res) => {
   const data = await Candidateervice.verifyOTP(req);
   const token = await GeneretaeAuthToken(data);
-  res.send({data, token})
-})
+  res.send({ data, token });
+});
+
+const fetchJobsByCandudateId = catchAsync(async (req, res) => {
+  const data = await Candidateervice.fetchJobsByCandudateId(req);
+  res.send(data);
+});
+
+const fetchDailyJobsByCandudateId = catchAsync(async (req, res) => {
+  const data = await Candidateervice.fetchDailyJobsByCandudateId(req);
+  res.send(data);
+});
 
 module.exports = {
   createCandidate,
@@ -86,5 +96,7 @@ module.exports = {
   fetchCities,
   fetchLocalityByCity,
   sentOTP_mail,
-  verifyOTP
+  verifyOTP,
+  fetchJobsByCandudateId,
+  fetchDailyJobsByCandudateId,
 };
