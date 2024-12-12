@@ -132,7 +132,7 @@ const ApplicatoinsDetailsSchema = new mongoose.Schema(
     empId: String,
     active: {
       type: Boolean,
-      default: v4,
+      default: true,
     },
     details: {
       type: Array,

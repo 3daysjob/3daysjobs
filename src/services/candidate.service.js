@@ -8,6 +8,8 @@ const { default: axios } = require('axios');
 const Emailservice = require('./email.service');
 const { saveOTP } = require('../utils/otpSave');
 const { SaveOTP } = require('../models/otp.model');
+const { pipeline } = require('nodemailer/lib/xoauth2');
+const { pipe } = require('../config/logger');
 const createCandidate = async (req) => {
   const { email, lat, long } = req.body;
   const findCand = await Candidate.findOne({ email: email });
@@ -230,7 +232,9 @@ const fetchJobsByCandudateId = async (req) => {
 };
 
 const fetchDailyJobsByCandudateId = async (req) => {
-  // const { userId } = req;
+  const { userId } = req;
+  console.log(userId,"candId");
+  
   const jobs = await EmployerJobPost.aggregate([
     {
       $match: {
@@ -251,6 +255,35 @@ const fetchDailyJobsByCandudateId = async (req) => {
         preserveNullAndEmptyArrays: true,
         path: '$company',
       },
+    },
+    {
+      $lookup: {
+        from: 'applications',
+        localField: '_id',
+        foreignField: 'jobPostId',
+        pipeline: [{ $match: { candId: userId } }],
+        as: 'application'
+      }
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$application',
+      }
+    },
+    {
+      $lookup: {
+        from: 'applications',
+        localField: '_id',
+        foreignField: 'jobPostId',
+        as: 'candAction'
+      }
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$candAction',
+      }
     },
   ]);
   return jobs;
