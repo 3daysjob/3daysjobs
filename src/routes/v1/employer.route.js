@@ -24,5 +24,7 @@ router.route('/getAllLocations').get(EmpAuth, EmploeryController.getAllLLocation
 router.route('/update/location/:id').put(EmpAuth, EmploeryController.updateLocationById);
 router.route('/:id').get(EmploeryController.getjobpostById);
 router.route('/verify-otp').post(EmploeryController.verifyOTP);
+router.route('/applied/candidates').get(EmpAuth, EmploeryController.getCandidates);
+router.route('/dashboardApi').get(EmpAuth, EmploeryController.dashboardApi);
 
 module.exports = router;

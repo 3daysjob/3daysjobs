@@ -57,18 +57,37 @@ passport.use('jwt', jwtStrategy);
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
-// app.get('/cities', async (req, res) => {
+// const app1Config = require('./google-services.json');
+
+// const employer = admin.initializeApp(
+//   {
+//     credential: admin.credential.cert(app1Config),
+//     databaseURL: app1Config.databaseURL,
+//   },
+//   'employer'
+// );
+
+// function getFirebaseApp(appId) {
+//   if (appId === 'employer') return employer;
+//   throw new Error('Invalid app ID');
+// }
+
+// const testFirebaseConfiguration = async () => {
 //   try {
-//     const filePath = '/home/innovature/Innovature/3daysjobs/src/cities.json';
-//     const fileContent = fs.readFileSync(filePath, 'utf8');
-//     const jsonData = JSON.parse(fileContent);
-//     const creation = await Cities.insertMany(jsonData);
-//     res.status(200).json(creation);
+//     const firestore = getFirebaseApp('employer').firestore();
+
+//     const result = await firestore.collection('testCollection').add({
+//       message: 'Firebase is configured correctly!',
+//       timestamp: admin.firestore.FieldValue.serverTimestamp(),
+//     });
+
+//     console.log('Test document added with ID:', result.id);
 //   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Failed to send verification code' });
+//     console.error('Error testing Firebase configuration:', error.message);
 //   }
-// });
+// };
+
+// testFirebaseConfiguration();
 
 // v1 api routes
 app.use('/v1', routes);

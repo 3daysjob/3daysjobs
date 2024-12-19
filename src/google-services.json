@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "975320279685",
+    "project_id": "daysapp-auth",
+    "storage_bucket": "daysapp-auth.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975320279685:android:e18a9e54e5f1b0612157ec",
+        "android_client_info": {
+          "package_name": "com.threedaysjob.employer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "975320279685-eg34r3p2k533co36h2bf1k3tm8llb7sf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBro7PsjOFyGKQJ6BJX8Ocq_e8Yb5jGhk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "975320279685-eg34r3p2k533co36h2bf1k3tm8llb7sf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
