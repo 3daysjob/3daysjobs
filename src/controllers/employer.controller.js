@@ -77,34 +77,43 @@ const profileImageUpdate = catchAsync(async (req, res) => {
 
 const createEmployerLocations = catchAsync(async (req, res) => {
   const data = await EmployerService.createEmployerLocations(req);
-  res.send(data)
+  res.send(data);
 });
 
 const getAllLLocations = catchAsync(async (req, res) => {
   const data = await EmployerService.getAllLLocations(req);
-  res.send(data)
-})
+  res.send(data);
+});
 
 const getjobpostById = catchAsync(async (req, res) => {
   const data = await EmployerService.getjobpostById(req);
   res.send(data);
-})
-
+});
 
 const verifyOTP = catchAsync(async (req, res) => {
   const data = await EmployerService.verifyOTP(req);
-  res.send(data)
-})
+  res.send(data);
+});
 
 const updateLocationById = catchAsync(async (req, res) => {
   const data = await EmployerService.updateLocationById(req);
-  res.send(data)
-})
+  res.send(data);
+});
 
 const updateRecruiterById = catchAsync(async (req, res) => {
   const data = await EmployerService.updateRecruiterById(req);
-  res.send(data)
-})
+  res.send(data);
+});
+
+const getCandidates = catchAsync(async (req, res) => {
+  const data = await EmployerService.getCandidates(req);
+  res.send(data);
+});
+
+const dashboardApi = catchAsync(async (req, res) => {
+  const data = await EmployerService.dashboardApi(req);
+  res.send(data);
+});
 
 module.exports = {
   createEmployer,
@@ -124,5 +133,7 @@ module.exports = {
   getjobpostById,
   verifyOTP,
   updateLocationById,
-  updateRecruiterById
+  updateRecruiterById,
+  getCandidates,
+  dashboardApi,
 };

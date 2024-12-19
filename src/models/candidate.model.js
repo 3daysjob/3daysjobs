@@ -87,14 +87,14 @@ const CandidateSchema = new mongoose.Schema(
     motherTongue: {
       type: String,
     },
-    thinks:{
-      type:Array,
-      default:[]
+    thinks: {
+      type: Array,
+      default: [],
     },
-    categories:{
-      type:Array,
-      default:[]
-    }
+    categories: {
+      type: Array,
+      default: [],
+    },
   },
   { timestamps: true }
 );
@@ -141,7 +141,7 @@ const ApplicatoinsDetailsSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+ApplicatoinsDetailsSchema.index({ status: 1, empId: 1 });
 const RecentSearch = mongoose.model('recentsearch', recentSearchSchema);
 const Candidate = mongoose.model('candidate', CandidateSchema);
 const Application = mongoose.model('applications', ApplicatoinsDetailsSchema);

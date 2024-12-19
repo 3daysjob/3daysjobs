@@ -6,37 +6,38 @@ const AWS = require('aws-sdk');
 const { saveOTP } = require('../utils/otpSave');
 const Emailservice = require('./email.service');
 const { SaveOTP } = require('../models/otp.model');
-const axios = require('axios')
+const axios = require('axios');
+const { Application } = require('../models/candidate.model');
 
 const createEmployer = async (req) => {
   const body = req.body;
   const findExistEmp = await Employer.findOne({ email: body.email });
   if (findExistEmp) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Email Account Alreay Exist's")
+    throw new ApiError(httpStatus.BAD_REQUEST, "Email Account Alreay Exist's");
   }
   let creations = await Employer.create(body);
   const OTP = Math.floor(1000 + Math.random() * 9000);
-  await saveOTP({ email: body.email, OTP })
+  await saveOTP({ email: body.email, OTP });
 
-  const emailService = await Emailservice.sentOTP_mail({ email: body.email, OTP })
+  const emailService = await Emailservice.sentOTP_mail({ email: body.email, OTP });
   return { creations, emailService };
 };
 
 const verifyOTP = async (req) => {
   const { OTP, email } = req.body;
-  const findOTP = await SaveOTP.findOne({ email })
+  const findOTP = await SaveOTP.findOne({ email });
   if (!findOTP) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid e-email")
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid e-email');
   } else if (findOTP.used == true) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid OTP")
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid OTP');
   } else if (findOTP.OTP != OTP) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid OTP")
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid OTP');
   } else {
-    findOTP.used = true
-    findOTP.save()
-    return { message: "Account Verified Successfully" }
+    findOTP.used = true;
+    findOTP.save();
+    return { message: 'Account Verified Successfully' };
   }
-}
+};
 
 const findById = async (id) => {
   let findEmployer = await Employer.findById(id);
@@ -77,14 +78,14 @@ const CreateEmployerJobPost = async (req) => {
   const response = await axios.get(
     `https://api.olamaps.io/places/v1/autocomplete?input=${body.jobLocation}&api_key=MTcI1j4e0oCGn4hBBrQCy3kDri0vUEpRIJbx2YHf`
   );
-  let lat
-  let lng
+  let lat;
+  let lng;
   if (response.data) {
-    lat = response.data.predictions[0].geometry.location.lat
-    lng = response.data.predictions[0].geometry.location.lng
+    lat = response.data.predictions[0].geometry.location.lat;
+    lng = response.data.predictions[0].geometry.location.lng;
   }
 
-  const location = { type: 'Point', coordinates: [lat, lng] }
+  const location = { type: 'Point', coordinates: [lat, lng] };
 
   const empId = req.userId;
   let data = {
@@ -99,14 +100,13 @@ const getEmployerPost = async (req) => {
   let empId = req.userId;
   const { postType } = req.query;
 
-  let postMatch = { active: true }
+  let postMatch = { active: true };
 
   if (postType && postType != '' && postType != 'null') {
     postMatch = {
-      postType: postType
-    }
+      postType: postType,
+    };
   }
-
 
   let values = await EmployerJobPost.aggregate([
     {
@@ -116,9 +116,9 @@ const getEmployerPost = async (req) => {
     },
     {
       $match: {
-        $and: [postMatch]
-      }
-    }
+        $and: [postMatch],
+      },
+    },
   ]);
   return values;
 };
@@ -176,9 +176,9 @@ const getRecruiter = async (req) => {
         recruiterName: 1,
         mobileNumber: 1,
         email: 1,
-        createdAt: 1
-      }
-    }
+        createdAt: 1,
+      },
+    },
   ]);
   return recruiters;
 };
@@ -199,10 +199,10 @@ const active_Inactive_Recruiter = async (req) => {
 };
 
 const updateRecruiterById = async (req) => {
-  const id = req.params.id
-  const update = await Recruiter.findByIdAndUpdate({ _id: id }, req.body, { new: true })
-  return update
-}
+  const id = req.params.id;
+  const update = await Recruiter.findByIdAndUpdate({ _id: id }, req.body, { new: true });
+  return update;
+};
 
 const guestCandidates = async (req) => {
   const { category } = req.body;
@@ -265,17 +265,17 @@ const profileImageUpdate = async (req) => {
 
 const createEmployerLocations = async (req) => {
   let empId = req.userId;
-  const { locationName, locationAddress } = req.body
+  const { locationName, locationAddress } = req.body;
   const response = await axios.get(
     `https://api.olamaps.io/places/v1/autocomplete?input=${locationAddress}&api_key=MTcI1j4e0oCGn4hBBrQCy3kDri0vUEpRIJbx2YHf`
   );
-  let lat
-  let lng
+  let lat;
+  let lng;
   if (response.data) {
-    lat = response.data.predictions[0].geometry.location.lat
-    lng = response.data.predictions[0].geometry.location.lng
+    lat = response.data.predictions[0].geometry.location.lat;
+    lng = response.data.predictions[0].geometry.location.lng;
   }
-  const location = { type: 'Point', coordinates: [lat, lng] }
+  const location = { type: 'Point', coordinates: [lat, lng] };
   let datas = {
     ...req.body,
     ...{ empId: empId, loc: location },
@@ -286,25 +286,24 @@ const createEmployerLocations = async (req) => {
 
 const updateLocationById = async (req) => {
   const id = req.params.id;
-  const { locationName, locationAddress } = req.body
+  const { locationName, locationAddress } = req.body;
   const response = await axios.get(
     `https://api.olamaps.io/places/v1/autocomplete?input=${locationAddress}&api_key=MTcI1j4e0oCGn4hBBrQCy3kDri0vUEpRIJbx2YHf`
   );
-  let lat
-  let lng
+  let lat;
+  let lng;
   if (response.data) {
-    lat = response.data.predictions[0].geometry.location.lat
-    lng = response.data.predictions[0].geometry.location.lng
+    lat = response.data.predictions[0].geometry.location.lat;
+    lng = response.data.predictions[0].geometry.location.lng;
   }
-  const location = { type: 'Point', coordinates: [lat, lng] }
+  const location = { type: 'Point', coordinates: [lat, lng] };
   let datas = {
     ...req.body,
     ...{ loc: location },
   };
-  let update = await EmployerLocation.findByIdAndUpdate({ _id: id }, datas, { new: true })
-  return update
-
-}
+  let update = await EmployerLocation.findByIdAndUpdate({ _id: id }, datas, { new: true });
+  return update;
+};
 
 const getAllLLocations = async (req) => {
   let empId = req.userId;
@@ -321,12 +320,198 @@ const getAllLLocations = async (req) => {
 const getjobpostById = async (req) => {
   let findJobpost = await EmployerJobPost.findById(req.params.id);
   if (!findJobpost) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "job post not found")
+    throw new ApiError(httpStatus.BAD_REQUEST, 'job post not found');
   }
-  return findJobpost
-}
+  return findJobpost;
+};
 
+const getCandidates = async (req) => {
+  const userId = req.userId;
+  const result = await Application.aggregate([
+    {
+      $match: { empId: userId },
+    },
+    {
+      $lookup: {
+        from: 'candidates',
+        localField: 'candId',
+        foreignField: '_id',
+        as: 'candidate',
+      },
+    },
+    {
+      $unwind: '$candidate',
+    },
+    {
+      $lookup: {
+        from: 'employerposts',
+        localField: 'jobPostId',
+        foreignField: '_id',
+        as: 'postDetails',
+      },
+    },
+    {
+      $unwind: '$postDetails',
+    },
+    {
+      $facet: {
+        candidates: [
+          {
+            $project: {
+              _id: 1,
+              active: 1,
+              candName: '$candidate.name',
+              candLocation: '$candidate.prefferedCity',
+              status: 1,
+              salary: '$postDetails.salaryFrom',
+              postId: '$postDetails._id',
+              candId: '$candidate._id',
+              jobTitle: '$postDetails.jobTitle',
+              candidate: '$candidate.work',
+            },
+          },
+        ],
+        counts: [
+          {
+            $group: {
+              _id: null,
+              appliedCount: {
+                $sum: { $cond: [{ $eq: ['$status', 'Applied'] }, 1, 0] },
+              },
+              shortlistedCount: {
+                $sum: { $cond: [{ $eq: ['$status', 'Shortlisted'] }, 1, 0] },
+              },
+              rejectedCount: {
+                $sum: { $cond: [{ $eq: ['$status', 'Rejected'] }, 1, 0] },
+              },
+              allCount: { $sum: 1 },
+            },
+          },
+        ],
+      },
+    },
+    {
+      $project: {
+        candidates: 1,
+        appliedCount: { $arrayElemAt: ['$counts.appliedCount', 0] },
+        shortlistedCount: { $arrayElemAt: ['$counts.shortlistedCount', 0] },
+        rejectedCount: { $arrayElemAt: ['$counts.rejectedCount', 0] },
+        allCount: { $arrayElemAt: ['$counts.allCount', 0] },
+      },
+    },
+  ]);
 
+  const { candidates = [], appliedCount = 0, shortlistedCount = 0, rejectedCount = 0, allCount = 0 } = result[0] || {};
+
+  console.log({
+    candidates,
+    appliedCount,
+    shortlistedCount,
+    rejectedCount,
+    allCount,
+  });
+
+  return { candidates, pendingCount, shortlistedCount };
+};
+
+const dashboardApi = async (req) => {
+  const userId = req.userId;
+  const result = await Application.aggregate([
+    {
+      $match: { empId: userId },
+    },
+    {
+      $lookup: {
+        from: 'candidates',
+        localField: 'candId',
+        foreignField: '_id',
+        as: 'candidate',
+      },
+    },
+    {
+      $unwind: '$candidate',
+    },
+    {
+      $facet: {
+        candidateDetails: [
+          {
+            $project: {
+              _id: 1,
+              candName: '$candidate.name',
+              candLocation: '$candidate.prefferedCity',
+              status: 1,
+            },
+          },
+        ],
+
+        counts: [
+          {
+            $group: {
+              _id: null,
+              totalApplications: { $sum: 1 },
+              appliedCount: {
+                $sum: {
+                  $cond: [{ $eq: ['$status', 'Applied'] }, 1, 0],
+                },
+              },
+              shortlistedCount: {
+                $sum: {
+                  $cond: [{ $eq: ['$status', 'Shortlisted'] }, 1, 0],
+                },
+              },
+              rejectedCount: {
+                $sum: {
+                  $cond: [{ $eq: ['$status', 'Rejected'] }, 1, 0],
+                },
+              },
+            },
+          },
+          {
+            $addFields: {
+              month: { $month: '$createdAt' },
+              year: { $year: '$createdAt' },
+            },
+          },
+          {
+            $group: {
+              _id: { year: '$year', month: '$month' },
+              totalApplications: { $sum: 1 },
+              appliedCount: {
+                $sum: {
+                  $cond: [{ $eq: ['$status', 'Applied'] }, 1, 0],
+                },
+              },
+              shortlistedCount: {
+                $sum: {
+                  $cond: [{ $eq: ['$status', 'Shortlisted'] }, 1, 0],
+                },
+              },
+              rejectedCount: {
+                $sum: {
+                  $cond: [{ $eq: ['$status', 'Rejected'] }, 1, 0],
+                },
+              },
+            },
+          },
+          {
+            $sort: { '_id.year': 1, '_id.month': 1 },
+          },
+        ],
+      },
+    },
+    {
+      $project: {
+        candidateDetails: 1,
+        totalApplications: { $arrayElemAt: ['$counts.totalApplications', 0] },
+        appliedCount: { $arrayElemAt: ['$counts.appliedCount', 0] },
+        shortlistedCount: { $arrayElemAt: ['$counts.shortlistedCount', 0] },
+        rejectedCount: { $arrayElemAt: ['$counts.rejectedCount', 0] },
+        monthWiseData: '$counts',
+      },
+    },
+  ]);
+  return result;
+};
 
 module.exports = {
   createEmployer,
@@ -347,4 +532,6 @@ module.exports = {
   verifyOTP,
   updateLocationById,
   updateRecruiterById,
+  getCandidates,
+  dashboardApi,
 };
