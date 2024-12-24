@@ -8,6 +8,7 @@ const Emailservice = require('./email.service');
 const { SaveOTP } = require('../models/otp.model');
 const axios = require('axios');
 const { Application } = require('../models/candidate.model');
+const { pipeline } = require('nodemailer/lib/xoauth2');
 
 const createEmployer = async (req) => {
   const body = req.body;
@@ -327,15 +328,52 @@ const getjobpostById = async (req) => {
 
 const getCandidates = async (req) => {
   const userId = req.userId;
+  const { typeList, applicationStatus, salaryRange, employMent, candidateType, filterApplied } = req.body;
+  let candidateTypeMatch = { active: true };
+  let typeListMatch = { active: true };
+  let salaryMatch = { active: true };
+  let employmentMatch = { active: true };
+  let applicationMatch = { active: true };
+
+  if (candidateType) {
+    candidateTypeMatch = { gender: candidateType };
+  }
+
+  if (typeList && typeList.length > 0) {
+    typeListMatch = { prefferedCity: { $in: typeList } };
+  }
+
+  if (salaryRange && filterApplied) {
+    salaryMatch = {
+      lastSalary: { $gte: salaryRange.from, $lte: salaryRange.to },
+    };
+  }
+
+  if (employMent) {
+    employmentMatch = {
+      work: employMent,
+    };
+  }
+
+  if (applicationStatus && applicationStatus != 'All') {
+    applicationMatch = { status: applicationStatus };
+  }
+
+  console.log(req.body);
   const result = await Application.aggregate([
     {
-      $match: { empId: userId },
+      $match: { $and: [{ empId: userId }, applicationMatch] },
     },
     {
       $lookup: {
         from: 'candidates',
         localField: 'candId',
         foreignField: '_id',
+        pipeline: [
+          {
+            $match: { $and: [candidateTypeMatch, typeListMatch, salaryMatch, employmentMatch] },
+          },
+        ],
         as: 'candidate',
       },
     },
@@ -354,64 +392,58 @@ const getCandidates = async (req) => {
       $unwind: '$postDetails',
     },
     {
-      $facet: {
-        candidates: [
-          {
-            $project: {
-              _id: 1,
-              active: 1,
-              candName: '$candidate.name',
-              candLocation: '$candidate.prefferedCity',
-              status: 1,
-              salary: '$postDetails.salaryFrom',
-              postId: '$postDetails._id',
-              candId: '$candidate._id',
-              jobTitle: '$postDetails.jobTitle',
-              candidate: '$candidate.work',
-            },
-          },
-        ],
-        counts: [
-          {
-            $group: {
-              _id: null,
-              appliedCount: {
-                $sum: { $cond: [{ $eq: ['$status', 'Applied'] }, 1, 0] },
-              },
-              shortlistedCount: {
-                $sum: { $cond: [{ $eq: ['$status', 'Shortlisted'] }, 1, 0] },
-              },
-              rejectedCount: {
-                $sum: { $cond: [{ $eq: ['$status', 'Rejected'] }, 1, 0] },
-              },
-              allCount: { $sum: 1 },
-            },
-          },
-        ],
-      },
-    },
-    {
       $project: {
-        candidates: 1,
-        appliedCount: { $arrayElemAt: ['$counts.appliedCount', 0] },
-        shortlistedCount: { $arrayElemAt: ['$counts.shortlistedCount', 0] },
-        rejectedCount: { $arrayElemAt: ['$counts.rejectedCount', 0] },
-        allCount: { $arrayElemAt: ['$counts.allCount', 0] },
+        _id: 1,
+        active: 1,
+        candName: '$candidate.name',
+        candLocation: '$candidate.prefferedCity',
+        status: 1,
+        salary: '$postDetails.salaryFrom',
+        postId: '$postDetails._id',
+        candId: '$candidate._id',
+        jobTitle: '$postDetails.jobTitle',
+        candidate: '$candidate.work',
+        skills: '$candidate.skills',
+        gender: '$candidate.gender',
+        assets:'$candidate.thinks',
+        createdAt:'$candidate.createdAt',
+        email:'$candidate.email',
+        contactNumber:'$candidate.mobileNumber',
       },
     },
   ]);
 
-  const { candidates = [], appliedCount = 0, shortlistedCount = 0, rejectedCount = 0, allCount = 0 } = result[0] || {};
+  const ApplicationCounts = await Application.aggregate([
+    {
+      $match: { empId: userId },
+    },
+    {
+      $group: {
+        _id: null,
+        appliedCount: {
+          $sum: { $cond: [{ $eq: ['$status', 'Applied'] }, 1, 0] },
+        },
+        shortlistedCount: {
+          $sum: { $cond: [{ $eq: ['$status', 'Shortlisted'] }, 1, 0] },
+        },
+        rejectedCount: {
+          $sum: { $cond: [{ $eq: ['$status', 'Rejected'] }, 1, 0] },
+        },
+        allCount: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        appliedCount: '$appliedCount',
+        shortlistedCount: '$shortlistedCount',
+        rejectedCount: '$rejectedCount',
+        allCount: '$allCount',
+      },
+    },
+  ]);
 
-  console.log({
-    candidates,
-    appliedCount,
-    shortlistedCount,
-    rejectedCount,
-    allCount,
-  });
-
-  return { candidates, pendingCount, shortlistedCount };
+  const { appliedCount, shortlistedCount, rejectedCount, allCount } = ApplicationCounts[0];
+  return { candidates: result, appliedCount, shortlistedCount, rejectedCount, allCount };
 };
 
 const dashboardApi = async (req) => {

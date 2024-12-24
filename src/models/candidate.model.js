@@ -82,7 +82,7 @@ const CandidateSchema = new mongoose.Schema(
       type: String,
     },
     lastSalary: {
-      type: String,
+      type: Number,
     },
     motherTongue: {
       type: String,
