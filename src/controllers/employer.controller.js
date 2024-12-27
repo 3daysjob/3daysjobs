@@ -115,6 +115,11 @@ const dashboardApi = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const updateCandidateApplication = catchAsync(async (req, res) => {
+  const data = await EmployerService.updateCandidateApplication(req);
+  res.send(data);
+});
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -136,4 +141,5 @@ module.exports = {
   updateRecruiterById,
   getCandidates,
   dashboardApi,
+  updateCandidateApplication,
 };

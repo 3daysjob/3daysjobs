@@ -120,6 +120,14 @@ const getEmployerPost = async (req) => {
         $and: [postMatch],
       },
     },
+    {
+      $lookup: {
+        from: 'applications',
+        localField: '_id',
+        foreignField: 'jobPostId',
+        as: 'applications',
+      },
+    },
   ]);
   return values;
 };
@@ -405,10 +413,10 @@ const getCandidates = async (req) => {
         candidate: '$candidate.work',
         skills: '$candidate.skills',
         gender: '$candidate.gender',
-        assets:'$candidate.thinks',
-        createdAt:'$candidate.createdAt',
-        email:'$candidate.email',
-        contactNumber:'$candidate.mobileNumber',
+        assets: '$candidate.thinks',
+        createdAt: '$candidate.createdAt',
+        email: '$candidate.email',
+        contactNumber: '$candidate.mobileNumber',
       },
     },
   ]);
@@ -545,6 +553,17 @@ const dashboardApi = async (req) => {
   return result;
 };
 
+const updateCandidateApplication = async (req) => {
+  const { id, status, candId } = req.body;
+  let findApplicationById = await Application.findOne({ _id: id, candId: candId });
+  if (!findApplicationById) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Application Not Found!');
+  }
+  findApplicationById.status = status;
+  findApplicationById.save();
+  return findApplicationById;
+};
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -566,4 +585,5 @@ module.exports = {
   updateRecruiterById,
   getCandidates,
   dashboardApi,
+  updateCandidateApplication,
 };
