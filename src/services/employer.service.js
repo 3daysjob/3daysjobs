@@ -564,6 +564,18 @@ const updateCandidateApplication = async (req) => {
   return findApplicationById;
 };
 
+const forgotPassword = async (req) => {
+  const { email } = req.body;
+  let finduserByEmail = await Employer.findOne({ email: email });
+  if (!finduserByEmail) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Recruiter not available');
+  }
+  const OTP = Math.floor(1000 + Math.random() * 9000);
+  await saveOTP({ email: email, OTP });
+  const emailService = await Emailservice.sentOTP_mail({ email: email, OTP });
+  return emailService;
+};
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -586,4 +598,5 @@ module.exports = {
   getCandidates,
   dashboardApi,
   updateCandidateApplication,
+  forgotPassword,
 };
