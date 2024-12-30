@@ -7,7 +7,7 @@ const { saveOTP } = require('../utils/otpSave');
 const Emailservice = require('./email.service');
 const { SaveOTP } = require('../models/otp.model');
 const axios = require('axios');
-const { Application } = require('../models/candidate.model');
+const { Application, Candidate } = require('../models/candidate.model');
 const { pipeline } = require('nodemailer/lib/xoauth2');
 
 const createEmployer = async (req) => {
@@ -576,6 +576,95 @@ const forgotPassword = async (req) => {
   return emailService;
 };
 
+const getEmployers = async (req) => {
+  const { fromDate, gender, pagination, searchKey, status, toDate } = req.body;
+  let nullMatch = { _id: { $ne: null } };
+  let dateMatch = nullMatch;
+  let statusFilter = nullMatch;
+  let searchMatch = nullMatch;
+
+  // date filter
+  if (fromDate && toDate) {
+    dateMatch = {
+      createdAt: { $gte: fromDate, $lte: toDate },
+    };
+  } else if (fromDate) {
+    dateMatch = {
+      createdAt: { $gte: fromDate },
+    };
+  } else if (toDate) {
+    dateMatch = {
+      createdAt: { $lte: toDate },
+    };
+  } else {
+    dateMatch = nullMatch;
+  }
+
+  // status filter
+  console.log(status, 'status');
+
+  if (status != null) {
+    statusFilter = {
+      active: { $eq: status },
+    };
+    console.log(status, 'lplp');
+  } else {
+    statusFilter = nullMatch;
+  }
+
+  // search
+
+  if (searchKey) {
+    searchMatch = {
+      $or: [
+        { companyName: { $regex: searchKey, $options: 'i' } },
+        { email: { $regex: searchKey, $options: 'i' } },
+        {
+          $expr: {
+            $regexMatch: {
+              input: { $toString: '$mobileNumber' },
+              regex: searchKey,
+              options: 'i',
+            },
+          },
+        },
+      ],
+    };
+  } else {
+    searchMatch = nullMatch;
+  }
+
+  const pageSize = 10;
+  const currentPage = pagination || 1;
+  const results = await Employer.find({ $and: [dateMatch, statusFilter, searchMatch] })
+    .skip((currentPage - 1) * pageSize)
+    .limit(pageSize);
+  const totalDocuments = await Employer.countDocuments({ _id: { $ne: null } });
+  const totalPages = Math.ceil(totalDocuments / pageSize);
+  return {
+    results,
+    currentPage,
+    totalPages,
+    totalDocuments,
+  };
+};
+
+const getCandidatesAdmin = async (req) => {
+  const pageSize = 10;
+  const currentPage = req.query.page || 1;
+  const results = await Candidate.find({ _id: { $ne: null } })
+    .skip((currentPage - 1) * pageSize)
+    .limit(pageSize);
+  const totalDocuments = await Candidate.countDocuments({ _id: { $ne: null } });
+  const totalPages = Math.ceil(totalDocuments / pageSize);
+  return {
+    results,
+    currentPage,
+    totalPages,
+    totalDocuments,
+  };
+};
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -599,4 +688,6 @@ module.exports = {
   dashboardApi,
   updateCandidateApplication,
   forgotPassword,
+  getEmployers,
+  getCandidatesAdmin,
 };

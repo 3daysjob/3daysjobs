@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
-
+const { toJSON, paginate } = require('./plugins');
 const EmployerSchema = new mongoose.Schema(
   {
     _id: {
@@ -164,7 +164,8 @@ const EmployerLocationSchema = new mongoose.Schema({
   empId: String
 }, { timestamps: true })
 
-
+EmployerSchema.plugin(toJSON);
+EmployerSchema.plugin(paginate);
 const EmployerLocation = mongoose.model('employerlocations', EmployerLocationSchema)
 module.exports = {
   Employer,

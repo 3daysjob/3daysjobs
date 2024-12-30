@@ -29,4 +29,8 @@ router.route('/dashboard/api').get(EmpAuth, EmploeryController.dashboardApi);
 router.route('/application/update').post(EmploeryController.updateCandidateApplication);
 router.route('/forgot-password').post(EmploeryController.forgotPassword);
 
+// admin Routes
+router.route('/admin/employer/list').post(EmploeryController.getEmployers);
+router.route('/admin/candidate/list').post(EmploeryController.getCandidatesAdmin);
+
 module.exports = router;
