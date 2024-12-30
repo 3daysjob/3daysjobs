@@ -125,6 +125,16 @@ const forgotPassword = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getEmployers = catchAsync(async (req, res) => {
+  const data = await EmployerService.getEmployers(req);
+  res.send(data);
+});
+
+const getCandidatesAdmin = catchAsync(async (req, res) => {
+  const data = await EmployerService.getCandidatesAdmin(req);
+  res.send(data);
+});
+
 module.exports = {
   createEmployer,
   setPassword,
@@ -148,4 +158,6 @@ module.exports = {
   dashboardApi,
   updateCandidateApplication,
   forgotPassword,
+  getEmployers,
+  getCandidatesAdmin,
 };
