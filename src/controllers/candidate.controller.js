@@ -82,6 +82,10 @@ const fetchDailyJobsByCandudateId = catchAsync(async (req, res) => {
   const data = await Candidateervice.fetchDailyJobsByCandudateId(req);
   res.send(data);
 });
+const getKeySkills = catchAsync(async (req, res) => {
+  const data = await Candidateervice.getKeySkills(req);
+  res.send(data);
+});
 
 module.exports = {
   createCandidate,
@@ -99,4 +103,5 @@ module.exports = {
   verifyOTP,
   fetchJobsByCandudateId,
   fetchDailyJobsByCandudateId,
+  getKeySkills,
 };

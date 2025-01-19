@@ -21,5 +21,8 @@ router.route('/send-otp').post(CandidateController.sentOTP_mail);
 router.route('/verify-otp').post(CandidateController.verifyOTP);
 router.route('/fetch/jobs/bycandudateId').get(CandidateController.fetchJobsByCandudateId);
 router.route('/fetch/daily/jobsbycandudateId').get(Auth,CandidateController.fetchDailyJobsByCandudateId);
+router.route('/fetch/getKeySkills').post(CandidateController.getKeySkills);
+
+
 
 module.exports = router;

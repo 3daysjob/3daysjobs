@@ -141,13 +141,28 @@ const ApplicatoinsDetailsSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+const KeyskillSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+  },
+  dom: Array,
+  int: Array,
+  kewords: Array,
+  key: String,
+});
+
 ApplicatoinsDetailsSchema.index({ status: 1, empId: 1 });
+KeyskillSchema.index({ key: 1 });
+
 const RecentSearch = mongoose.model('recentsearch', recentSearchSchema);
 const Candidate = mongoose.model('candidate', CandidateSchema);
 const Application = mongoose.model('applications', ApplicatoinsDetailsSchema);
+const KeySkills = mongoose.model('keywords', KeyskillSchema);
 
 module.exports = {
   Candidate,
   RecentSearch,
   Application,
+  KeySkills,
 };

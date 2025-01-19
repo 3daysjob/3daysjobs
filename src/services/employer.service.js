@@ -601,13 +601,11 @@ const getEmployers = async (req) => {
   }
 
   // status filter
-  console.log(status, 'status');
 
   if (status != null) {
     statusFilter = {
       active: { $eq: status },
     };
-    console.log(status, 'lplp');
   } else {
     statusFilter = nullMatch;
   }

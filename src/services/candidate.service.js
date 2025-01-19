@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const { Candidate, RecentSearch, Application } = require('../models/candidate.model');
+const { Candidate, RecentSearch, Application, KeySkills } = require('../models/candidate.model');
 const { EmployerJobPost } = require('../models/employer.mode');
 const AWS = require('aws-sdk');
 const { Cities } = require('../models/cities.model');
@@ -233,8 +233,8 @@ const fetchJobsByCandudateId = async (req) => {
 
 const fetchDailyJobsByCandudateId = async (req) => {
   const { userId } = req;
-  console.log(userId,"candId");
-  
+  console.log(userId, 'candId');
+
   const jobs = await EmployerJobPost.aggregate([
     {
       $match: {
@@ -262,31 +262,37 @@ const fetchDailyJobsByCandudateId = async (req) => {
         localField: '_id',
         foreignField: 'jobPostId',
         pipeline: [{ $match: { candId: userId } }],
-        as: 'application'
-      }
+        as: 'application',
+      },
     },
     {
       $unwind: {
         preserveNullAndEmptyArrays: true,
         path: '$application',
-      }
+      },
     },
     {
       $lookup: {
         from: 'applications',
         localField: '_id',
         foreignField: 'jobPostId',
-        as: 'candAction'
-      }
+        as: 'candAction',
+      },
     },
     {
       $unwind: {
         preserveNullAndEmptyArrays: true,
         path: '$candAction',
-      }
+      },
     },
   ]);
   return jobs;
+};
+
+const getKeySkills = async (req) => {
+  const { id } = req.body;
+  const findSkills = await KeySkills.findById(id);
+  return findSkills;
 };
 
 module.exports = {
@@ -305,4 +311,5 @@ module.exports = {
   verifyOTP,
   fetchJobsByCandudateId,
   fetchDailyJobsByCandudateId,
+  getKeySkills,
 };
