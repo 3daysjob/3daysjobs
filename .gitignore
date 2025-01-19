@@ -10,4 +10,4 @@ yarn-error.log
 # Code coverage
 coverage
 
-serviceAccountKey.json
+src/serviceAccountKey.json
