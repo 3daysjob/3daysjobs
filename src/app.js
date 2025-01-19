@@ -13,17 +13,10 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
-const fs = require('fs');
-const path = require('path');
-const admin = require('firebase-admin');
-const serviceAccount = require('../daysjobs.json');
-const { Cities } = require('./models/cities.model');
+
 
 const app = express();
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  // Add any other configuration options if needed
-});
+
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
@@ -57,37 +50,6 @@ passport.use('jwt', jwtStrategy);
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
-// const app1Config = require('./google-services.json');
-
-// const employer = admin.initializeApp(
-//   {
-//     credential: admin.credential.cert(app1Config),
-//     databaseURL: app1Config.databaseURL,
-//   },
-//   'employer'
-// );
-
-// function getFirebaseApp(appId) {
-//   if (appId === 'employer') return employer;
-//   throw new Error('Invalid app ID');
-// }
-
-// const testFirebaseConfiguration = async () => {
-//   try {
-//     const firestore = getFirebaseApp('employer').firestore();
-
-//     const result = await firestore.collection('testCollection').add({
-//       message: 'Firebase is configured correctly!',
-//       timestamp: admin.firestore.FieldValue.serverTimestamp(),
-//     });
-
-//     console.log('Test document added with ID:', result.id);
-//   } catch (error) {
-//     console.error('Error testing Firebase configuration:', error.message);
-//   }
-// };
-
-// testFirebaseConfiguration();
 
 // v1 api routes
 app.use('/v1', routes);
