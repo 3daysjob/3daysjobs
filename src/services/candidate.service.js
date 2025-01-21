@@ -291,8 +291,22 @@ const fetchDailyJobsByCandudateId = async (req) => {
 
 const getKeySkills = async (req) => {
   const { id } = req.body;
-  const findSkills = await KeySkills.findById(id);
-  return findSkills;
+  const findSkills = await KeySkills.aggregate([
+    {
+      $match: { _id: { $in: id } },
+    },
+    {
+      $unwind: '$kewords',
+    },
+    {
+      $group: {
+        _id: null,
+        mergedKeywords: { $push: '$kewords' },
+      },
+    },
+  ]);
+  const data = findSkills.length >0 ? findSkills[0].mergedKeywords : []
+  return data;
 };
 
 module.exports = {
