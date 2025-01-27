@@ -233,8 +233,6 @@ const fetchJobsByCandudateId = async (req) => {
 
 const fetchDailyJobsByCandudateId = async (req) => {
   const { userId } = req;
-  console.log(userId, 'candId');
-
   const jobs = await EmployerJobPost.aggregate([
     {
       $match: {
@@ -279,12 +277,6 @@ const fetchDailyJobsByCandudateId = async (req) => {
         as: 'candAction',
       },
     },
-    {
-      $unwind: {
-        preserveNullAndEmptyArrays: true,
-        path: '$candAction',
-      },
-    },
   ]);
   return jobs;
 };
@@ -305,7 +297,7 @@ const getKeySkills = async (req) => {
       },
     },
   ]);
-  const data = findSkills.length >0 ? findSkills[0].mergedKeywords : []
+  const data = findSkills.length > 0 ? findSkills[0].mergedKeywords : [];
   return data;
 };
 
