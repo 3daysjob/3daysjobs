@@ -95,6 +95,10 @@ const CandidateSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    notificationPush: {
+      type: String,
+      default: '',
+    },
   },
   { timestamps: true }
 );

@@ -11,14 +11,20 @@ const { SaveOTP } = require('../models/otp.model');
 const { pipeline } = require('nodemailer/lib/xoauth2');
 const { pipe } = require('../config/logger');
 const createCandidate = async (req) => {
-  const { email, lat, long } = req.body;
+  const { email, lat, long, notificationPush } = req.body;
   const findCand = await Candidate.findOne({ email: email });
   if (findCand) {
+    findCand.notificationPush = notificationPush;
+    findCand.save();
     return findCand;
   } else {
     let data = {
       ...req.body,
-      ...{ loc: { type: 'Point', coordinates: [parseFloat(lat), parseFloat(long)] } },
+      loc: {
+        type: 'Point',
+        coordinates: [parseFloat(lat) || 0, parseFloat(long) || 0],
+      },
+      notificationPush,
     };
     return await Candidate.create(data);
   }
@@ -189,7 +195,7 @@ const sentOTP_mail = async (req) => {
 };
 
 const verifyOTP = async (req) => {
-  const { OTP, email } = req.body;
+  const { OTP, email, notificationPush } = req.body;
   const findOTP = await SaveOTP.findOne({ email });
   if (!findOTP) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid e-email');
@@ -206,7 +212,6 @@ const verifyOTP = async (req) => {
 };
 
 const fetchJobsByCandudateId = async (req) => {
-  // const { userId } = req;
   const jobs = await EmployerJobPost.aggregate([
     {
       $match: {
@@ -233,7 +238,11 @@ const fetchJobsByCandudateId = async (req) => {
 
 const fetchDailyJobsByCandudateId = async (req) => {
   const { userId } = req;
-  const jobs = await EmployerJobPost.aggregate([
+  const { pageNo, pageSize } = req.body;
+  const skip = (pageNo - 1) * pageSize;
+  const limit = pageSize;
+
+  const result = await EmployerJobPost.aggregate([
     {
       $match: {
         active: true,
@@ -277,8 +286,17 @@ const fetchDailyJobsByCandudateId = async (req) => {
         as: 'candAction',
       },
     },
+    {
+      $facet: {
+        totalCount: [{ $count: 'count' }],
+        results: [{ $skip: skip }, { $limit: limit }],
+      },
+    },
   ]);
-  return jobs;
+  const totalCount = result[0].totalCount.length > 0 ? result[0].totalCount[0].count : 0;
+  const results = result[0].results;
+  const hasNextPage = pageNo * pageSize < totalCount;
+  return { totalCount, results, hasNextPage };
 };
 
 const getKeySkills = async (req) => {
