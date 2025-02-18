@@ -5,6 +5,7 @@ const docsRoute = require('./docs.route');
 const config = require('../../config/config');
 const employer = require('./employer.route');
 const candidate = require('./candidate.route');
+const joblessUser = require('./joblessday/jobless.user.route');
 const router = express.Router();
 
 const defaultRoutes = [
@@ -23,6 +24,10 @@ const defaultRoutes = [
   {
     path: '/candidate',
     route: candidate,
+  },
+  {
+    path: '/jobless',
+    route: joblessUser,
   },
 ];
 
