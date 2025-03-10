@@ -17,7 +17,20 @@ const UpdateJobPost = async (req) => {
   return findById;
 };
 
+const fetchJobPost = async (req) => {
+  const userId = req.userId;
+  const jobPost = await JoblessJobPost.aggregate([
+    {
+      $match: {
+        userId,
+      },
+    },
+  ]);
+  return jobPost;
+};
+
 module.exports = {
   createJobPost,
   UpdateJobPost,
+  fetchJobPost,
 };

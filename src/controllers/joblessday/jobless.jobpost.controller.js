@@ -9,11 +9,17 @@ const createJobPost = catchAsync(async (req, res) => {
 });
 
 const updateJobPost = catchAsync(async (req, res) => {
-    const data = await JoblessPostService.UpdateJobPost(req);
-    res.send(data);
-  });
+  const data = await JoblessPostService.UpdateJobPost(req);
+  res.send(data);
+});
+
+const fetchJobPost = catchAsync(async (req, res) => {
+  const data = await JoblessPostService.fetchJobPost(req);
+  res.send(data);
+});
 
 module.exports = {
   createJobPost,
-  updateJobPost
+  updateJobPost,
+  fetchJobPost,
 };
