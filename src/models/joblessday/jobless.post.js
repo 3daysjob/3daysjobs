@@ -39,6 +39,10 @@ const JoblesjobPostSchema = mongoose.Schema(
     userId: {
       type: String,
     },
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );
