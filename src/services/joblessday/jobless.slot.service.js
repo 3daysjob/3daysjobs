@@ -16,6 +16,17 @@ const fetchJslots = async (req) => {
         userId,
       },
     },
+    {
+      $lookup: {
+        from: 'joblessposts',
+        localField: 'postId',
+        foreignField: '_id',
+        as: 'post',
+      },
+    },
+    {
+      $unwind: '$post',
+    },
   ]);
   return slots;
 };

@@ -4,6 +4,6 @@ const JoblessSlotController = require('../../../controllers/joblessday/jobless.s
 const JoblessAuth = require('../../../middlewares/jobless.auth');
 
 router.route('/').post(JoblessAuth, JoblessSlotController.slotCreation);
-router.route('/fetch/slots').post(JoblessAuth, JoblessSlotController.fetchJslots);
+router.route('/fetch/slots').get(JoblessAuth, JoblessSlotController.fetchJslots);
 
 module.exports = router;
