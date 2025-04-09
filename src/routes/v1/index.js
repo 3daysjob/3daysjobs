@@ -8,7 +8,7 @@ const candidate = require('./candidate.route');
 const joblessUser = require('./joblessday/jobless.user.route');
 const joblessAuth = require('./joblessday/jobless.auth.route');
 const joblessPost = require('./joblessday/jobless.jobpost.route');
-
+const joblessSlot = require('./joblessday/jobless.slot.route');
 
 const router = express.Router();
 
@@ -40,6 +40,10 @@ const defaultRoutes = [
   {
     path: '/jobless/post',
     route: joblessPost,
+  },
+  {
+    path: '/jobless/slot',
+    route: joblessSlot,
   },
 ];
 
