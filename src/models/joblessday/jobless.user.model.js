@@ -28,6 +28,24 @@ const JoblessuserSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    fullName: String,
+    stepper: {
+      type: Number,
+      default: 0,
+    },
+    contact: String,
+    DOB: String,
+    gender: String,
+    employmentType:String,
+    address:String,
+    educationDetails: {
+      type: Array,
+      default: [],
+    },
+    employmentDetails: {
+      type: Array,
+      default: [],
+    },
     isEmailVerified: {
       type: Boolean,
       default: false,
