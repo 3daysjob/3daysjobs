@@ -14,7 +14,7 @@ const getJoblessUserById = async (id) => {
 };
 
 const updateJoblessUserById = async (userId, updateBody) => {
-  const user = await getUserById(userId);
+  const user = await getJoblessUserById(userId);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
