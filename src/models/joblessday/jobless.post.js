@@ -43,6 +43,12 @@ const JoblesjobPostSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    startTime: {
+      type: String,
+    },
+    endTime: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
