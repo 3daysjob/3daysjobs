@@ -44,7 +44,6 @@ const fetchJobPost = async (req) => {
 const fetchCurrentActiveJobs = async (req) => {
   const currentTime = new Date();
   const validEnd = await JoblessJobPost.find({ endTime: { $gte: currentTime } });
-  console.log(validEnd, 'validEnd');
   return validEnd;
 };
 

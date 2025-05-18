@@ -49,6 +49,12 @@ const JoblesjobPostSchema = mongoose.Schema(
     endTime: {
       type: Date,
     },
+    experience: {
+      type: String,
+    },
+    openings: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );
