@@ -8,9 +8,6 @@ const createJobPost = async (req) => {
     const { startTime, endTime } = req.body;
   const istStartTime = moment.utc(startTime).add(5, 'hours').add(30, 'minutes').toDate();
   const istEndTime = moment.utc(endTime).add(5, 'hours').add(30, 'minutes').toDate();
-  console.log("IST Start Time:", istStartTime);
-  console.log("IST End Time:", istEndTime);
-
   const creation = await JoblessJobPost.create({
     ...req.body,
     startTime: istStartTime,
