@@ -55,6 +55,9 @@ const JoblesjobPostSchema = mongoose.Schema(
     openings: {
       type: Number,
     },
+    date: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
