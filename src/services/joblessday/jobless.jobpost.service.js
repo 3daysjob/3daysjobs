@@ -5,7 +5,7 @@ const moment = require('moment');
 
 const createJobPost = async (req) => {
   const userId = req.userId;
-  //   const { startTime, endTime } = req.body;
+    const { startTime, endTime } = req.body;
   // const istStartTime = moment.utc(startTime).add(5, 'hours').add(30, 'minutes').toDate();
   // const istEndTime = moment.utc(endTime).add(5, 'hours').add(30, 'minutes').toDate();
   // console.log("IST Start Time:", istStartTime);
@@ -13,8 +13,8 @@ const createJobPost = async (req) => {
 
   const creation = await JoblessJobPost.create({
     ...req.body,
-    startTime: istStartTime,
-    endTime: istEndTime,
+    startTime: startTime,
+    endTime: endTime,
     userId,
   });
   return creation;
