@@ -68,7 +68,6 @@ const findjobById = async (req) => {
 };
 
 const ApplyJob = async (req) => {
-  const { jobId, recruiterId, candidateId, status } = req.body;
   const applyJob = await JoblessApplication.create(req.body);
   return applyJob;
 };
