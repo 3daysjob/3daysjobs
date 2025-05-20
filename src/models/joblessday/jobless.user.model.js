@@ -36,8 +36,11 @@ const JoblessuserSchema = mongoose.Schema(
     contact: String,
     DOB: String,
     gender: String,
-    employmentType:String,
-    address:String,
+    employmentType: String,
+    address: String,
+    state: String,
+    city: String,
+    headline: String,
     educationDetails: {
       type: Array,
       default: [],
