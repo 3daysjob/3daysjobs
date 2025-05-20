@@ -149,6 +149,9 @@ const getAppliedCandidatesByRecruiter = async (req) => {
         candidateName: '$candidates.fullName',
         experience: '$candidates.employmentType',
         skills: '$candidates.educationDetails',
+        state: '$candidates.state',
+        city: '$candidates.city',
+        headLine: '$candidates.headline',
       },
     },
   ]);
