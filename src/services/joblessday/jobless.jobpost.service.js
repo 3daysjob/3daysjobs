@@ -120,6 +120,41 @@ const ApplyJob = async (req) => {
   return applyJob;
 };
 
+const getAppliedCandidatesByRecruiter = async (req) => {
+  const userId = req.userId;
+  const candidates = await JoblessApplication.aggregate([
+    {
+      $match: {
+        recruiterId: userId,
+      },
+    },
+    {
+      $lookup: {
+        from: 'joblessusers',
+        localField: 'candidateId',
+        foreignField: '_id',
+        as: 'candidates',
+      },
+    },
+    {
+      $unwind: { preserveNullAndEmptyArrays: true, path: '$candidates' },
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        candidateId: 1,
+        jobId: 1,
+        recruiterId: 1,
+        candidateName: '$candidates.fullName',
+        experience: '$candidates.employmentType',
+        skills: '$candidates.educationDetails',
+      },
+    },
+  ]);
+  return candidates;
+};
+
 module.exports = {
   createJobPost,
   UpdateJobPost,
@@ -127,4 +162,5 @@ module.exports = {
   fetchCurrentActiveJobs,
   findjobById,
   ApplyJob,
+  getAppliedCandidatesByRecruiter,
 };
