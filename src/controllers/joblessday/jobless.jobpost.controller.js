@@ -19,7 +19,7 @@ const fetchJobPost = catchAsync(async (req, res) => {
 });
 
 const fetchCurrentActiveJobs = catchAsync(async (req, res) => {
-  const data = await JoblessPostService.fetchCurrentActiveJobs();
+  const data = await JoblessPostService.fetchCurrentActiveJobs(req);
   res.send(data);
 });
 
