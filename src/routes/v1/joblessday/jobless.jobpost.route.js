@@ -4,7 +4,7 @@ const JoblessPostController = require('../../../controllers/joblessday/jobless.j
 const JoblessAuth = require('../../../middlewares/jobless.auth');
 
 router.route('/').post(JoblessAuth, JoblessPostController.createJobPost);
-router.route('/:id').put(JoblessPostController.updateJobPost);
+router.route('/:id').put(JoblessPostController.updateJobPost).get(JoblessPostController.findjobById);
 router.route('/fetch/posts').post(JoblessAuth, JoblessPostController.fetchJobPost);
 router.route('/fetch/current/activejobs').post(JoblessPostController.fetchCurrentActiveJobs);
 
