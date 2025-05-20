@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const ApiError = require('../../utils/ApiError');
 const JoblessJobPost = require('../../models/joblessday/jobless.post');
 const moment = require('moment');
+const JoblessApplication = require('../../models/joblessday/joblessApplications.model');
 
 const createJobPost = async (req) => {
   const userId = req.userId;
@@ -66,10 +67,17 @@ const findjobById = async (req) => {
   return findJob;
 };
 
+const ApplyJob = async (req) => {
+  const { jobId, recruiterId, candidateId, status } = req.body;
+  const applyJob = await JoblessApplication.create(req.body);
+  return applyJob;
+};
+
 module.exports = {
   createJobPost,
   UpdateJobPost,
   fetchJobPost,
   fetchCurrentActiveJobs,
   findjobById,
+  ApplyJob,
 };

@@ -28,10 +28,16 @@ const findjobById = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const ApplyJob = catchAsync(async (req, res) => {
+  const data = await JoblessPostService.ApplyJob(req);
+  res.send(data);
+});
+
 module.exports = {
   createJobPost,
   updateJobPost,
   fetchJobPost,
   fetchCurrentActiveJobs,
   findjobById,
+  ApplyJob,
 };
