@@ -117,7 +117,7 @@ const findjobById = async (req) => {
 
 const ApplyJob = async (req) => {
   const { candidateId, recruiterId, jobId } = req.body;
-  let findExistApplication = await JoblessApplication.find({ candidateId, recruiterId, jobId });
+  let findExistApplication = await JoblessApplication.findOne({ candidateId, recruiterId, jobId });
   if (findExistApplication) {
     findExistApplication.status = req.body.status || findExistApplication.status;
     await findExistApplication.save();
