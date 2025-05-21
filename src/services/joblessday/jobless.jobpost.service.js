@@ -116,8 +116,16 @@ const findjobById = async (req) => {
 };
 
 const ApplyJob = async (req) => {
-  const applyJob = await JoblessApplication.create(req.body);
-  return applyJob;
+  const { candidateId, recruiterId, jobId } = req.body;
+  let findExistApplication = await JoblessApplication.find({ candidateId, recruiterId, jobId });
+  if (findExistApplication) {
+    findExistApplication.status = req.body.status || findExistApplication.status;
+    await findExistApplication.save();
+    return findExistApplication;
+  } else {
+    const applyJob = await JoblessApplication.create(req.body);
+    return applyJob;
+  }
 };
 
 const getAppliedCandidatesByRecruiter = async (req) => {
