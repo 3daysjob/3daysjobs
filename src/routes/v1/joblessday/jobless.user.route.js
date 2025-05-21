@@ -3,6 +3,6 @@ const JoblessUserController = require('../../../controllers/joblessday/jobless.u
 const router = express.Router();
 
 router.route('/').post(JoblessUserController.createJoblessUser);
-router.route('/:id').put(JoblessUserController.updateJoblessUser);
+router.route('/:id').put(JoblessUserController.updateJoblessUser).get(JoblessUserController.getJoblessUser);
 
 module.exports = router;
