@@ -53,6 +53,13 @@ const JoblessuserSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    bio: {
+      type: String,
+    },
+    expertise: {
+      type: Array,
+      default: [],
+    },
   },
   {
     timestamps: true,
