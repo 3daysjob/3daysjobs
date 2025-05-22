@@ -14,7 +14,7 @@ const getJoblessUser = catchAsync(async (req, res) => {
 });
 
 const updateJoblessUser = catchAsync(async (req, res) => {
-  const user = await JoblessUserServices.updateJoblessUserById(req.params.id, req.body);
+  const user = await JoblessUserServices.updateJoblessUserById(req);
   res.status(httpStatus.OK).send(user);
 });
 

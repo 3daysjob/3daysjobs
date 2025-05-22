@@ -60,6 +60,9 @@ const JoblessuserSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
+    profileImage: {
+      type: String,
+    },
   },
   {
     timestamps: true,
@@ -89,8 +92,6 @@ JoblessuserSchema.methods.isPasswordMatch = async function (password) {
 
 JoblessuserSchema.pre('save', async function (next) {
   const user = this;
-  console.log(user, 'MODEL');
-
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }
