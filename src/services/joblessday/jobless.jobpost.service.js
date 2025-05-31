@@ -19,11 +19,24 @@ const createJobPost = async (req) => {
 };
 
 const UpdateJobPost = async (req) => {
+  const { startTime, endTime } = req.body;
   let findById = await JoblessJobPost.findById(req.params.id);
   if (!findById) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Job post not found');
   }
-  findById = await JoblessJobPost.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true });
+  const istStartTime = startTime ? moment.utc(startTime).add(5, 'hours').add(30, 'minutes').toDate() : findById.startTime;
+  const istEndTime = endTime ? moment.utc(endTime).add(5, 'hours').add(30, 'minutes').toDate() : findById.endTime;
+
+  findById = await JoblessJobPost.findByIdAndUpdate(
+    { _id: req.params.id },
+    {
+      ...req.body,
+      startTime: istStartTime,
+      endTime: istEndTime,
+    },
+    { new: true }
+  );
+
   return findById;
 };
 
@@ -173,7 +186,7 @@ const blindfetchById = async (req) => {
   }
 
   const findpost = await JoblessJobPost.findById(id);
-  
+
   if (!findpost) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'job post not available');
   }
