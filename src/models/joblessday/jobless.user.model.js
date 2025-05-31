@@ -75,10 +75,9 @@ const JoblessuserSchema = mongoose.Schema(
     companysiteURL: {
       type: String,
     },
-    gst:{
-      type:String
-    }
-    
+    gst: {
+      type: String,
+    },
   },
   {
     timestamps: true,
