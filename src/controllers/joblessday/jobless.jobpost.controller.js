@@ -43,6 +43,11 @@ const blindfetchById = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const deteJobPost = catchAsync(async (req, res) => {
+  const data = await JoblessPostService.deteJobPost(req);
+  res.send(data);
+});
+
 module.exports = {
   createJobPost,
   updateJobPost,
@@ -52,4 +57,5 @@ module.exports = {
   ApplyJob,
   getAppliedCandidatesByRecruiter,
   blindfetchById,
+  deteJobPost,
 };

@@ -7,7 +7,11 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.route('/').post(upload.single('image'), JoblessAuth, JoblessPostController.createJobPost);
-router.route('/:id').put(upload.single('image'), JoblessPostController.updateJobPost).get(JoblessPostController.findjobById);
+router
+  .route('/:id')
+  .put(upload.single('image'), JoblessPostController.updateJobPost)
+  .get(JoblessPostController.findjobById)
+  .delete(JoblessPostController.deteJobPost);
 router.route('/fetch/posts').post(JoblessAuth, JoblessPostController.fetchJobPost);
 router.route('/fetch/current/activejobs').post(JoblessAuth, JoblessPostController.fetchCurrentActiveJobs);
 router.route('/application/status/update/common').post(JoblessPostController.ApplyJob);

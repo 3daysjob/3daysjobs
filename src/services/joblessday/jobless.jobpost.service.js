@@ -46,6 +46,7 @@ const fetchJobPost = async (req) => {
     {
       $match: {
         userId,
+        active: true,
       },
     },
   ]);
@@ -193,6 +194,26 @@ const blindfetchById = async (req) => {
   return findpost;
 };
 
+const deteJobPost = async (req) => {
+  const id = req.params.id;
+  if (!id) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Id is required');
+  }
+
+  let findpost = await JoblessJobPost.findById(id);
+
+  if (!findpost) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'job post not available');
+  }
+  findpost = await JoblessJobPost.findByIdAndUpdate(
+    { _id: req.params.id },
+    {
+      active: false,
+    },
+    { new: true }
+  );
+};
+
 module.exports = {
   createJobPost,
   UpdateJobPost,
@@ -202,4 +223,5 @@ module.exports = {
   ApplyJob,
   getAppliedCandidatesByRecruiter,
   blindfetchById,
+  deteJobPost,
 };
