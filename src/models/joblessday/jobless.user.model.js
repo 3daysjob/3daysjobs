@@ -63,6 +63,22 @@ const JoblessuserSchema = mongoose.Schema(
     profileImage: {
       type: String,
     },
+    employeeCount: {
+      type: Number,
+    },
+    recruiterName: {
+      type: String,
+    },
+    industry: {
+      type: String,
+    },
+    companysiteURL: {
+      type: String,
+    },
+    gst:{
+      type:String
+    }
+    
   },
   {
     timestamps: true,

@@ -13,7 +13,6 @@ const JoblessAuth = async (req, res, next) => {
     }
     try {
       const payload = jwt.verify(token, config.jwt.secret);
-      console.log(payload,"payload");
       
       let findEmoloyer = await JoblessUser.findById(payload.id);
       if (!findEmoloyer) {
