@@ -24,11 +24,7 @@ const updateJoblessUserById = async (req) => {
   // if (updateBody.email && (await JoblessUser.isEmailTaken(updateBody.email, userId))) {
   //   throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   // }
-  const file = req.file;
-  console.log(file,"file");
-  console.log(updateBody,"updateBody");
 
-  
   if (file) {
     const url = await uploadToR2(file.buffer, file.originalname, file.mimetype, 'profile');
     Object.assign(user, updateBody);

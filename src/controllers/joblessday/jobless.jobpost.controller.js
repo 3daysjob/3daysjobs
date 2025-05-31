@@ -38,6 +38,11 @@ const getAppliedCandidatesByRecruiter = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const blindfetchById = catchAsync(async (req, res) => {
+  const data = await JoblessPostService.blindfetchById(req);
+  res.send(data);
+});
+
 module.exports = {
   createJobPost,
   updateJobPost,
@@ -46,4 +51,5 @@ module.exports = {
   findjobById,
   ApplyJob,
   getAppliedCandidatesByRecruiter,
+  blindfetchById,
 };
