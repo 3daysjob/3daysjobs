@@ -19,6 +19,12 @@ const JoblesApplicationSchema = mongoose.Schema(
     recruiterId: {
       type: String,
     },
+    date: {
+      type: String,
+    },
+    time: {
+      type: String,
+    },
     active: {
       type: Boolean,
       default: true,
