@@ -81,6 +81,9 @@ const JoblessuserSchema = mongoose.Schema(
     companyName: {
       type: String,
     },
+    experienceLevel:{
+      type: String,
+    }
   },
   {
     timestamps: true,
