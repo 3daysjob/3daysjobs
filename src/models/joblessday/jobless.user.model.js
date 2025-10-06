@@ -26,7 +26,6 @@ const JoblessuserSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
     },
     fullName: String,
     stepper: {
