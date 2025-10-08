@@ -15,7 +15,13 @@ const getJoblessUser = catchAsync(async (req, res) => {
 
 const updateJoblessUser = catchAsync(async (req, res) => {
   const user = await JoblessUserServices.updateJoblessUserById(req);
-  res.status(httpStatus.OK).send(user);
+  const tokenRequired = req.body.tokenRequired;
+  if (tokenRequired) {
+    const tokens = await GeneretaeAuthToken(user);
+    res.status(httpStatus.OK).send({ user, tokens });
+  } else {
+    res.status(httpStatus.OK).send(user);
+  }
 });
 
 const uploadResume = catchAsync(async (req, res) => {
