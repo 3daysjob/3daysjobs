@@ -5,8 +5,8 @@ const joblessAuthService = require('../../services/joblessday/jobless.auth.servi
 const { GeneretaeAuthToken } = require('../../middlewares/genToken');
 
 const login = catchAsync(async (req, res) => {
-  const { email, password } = req.body;
-  const user = await joblessAuthService.loginUserWithEmailAndPassword(email, password);
+  const { email } = req.body;
+  const user = await joblessAuthService.loginUserWithEmailAndPassword(email);  
   const tokens = await GeneretaeAuthToken(user);
   res.send({ user, tokens });
 });
