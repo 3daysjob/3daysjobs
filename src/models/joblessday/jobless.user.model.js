@@ -19,6 +19,12 @@ const JoblessuserSchema = mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      lowercase: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error('Invalid email');
+        }
+      },
     },
     role: {
       type: String,
@@ -39,6 +45,7 @@ const JoblessuserSchema = mongoose.Schema(
     address: String,
     state: String,
     city: String,
+    preferredLocation: String,
     headline: String,
     educationDetails: {
       type: Array,
@@ -52,37 +59,36 @@ const JoblessuserSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    bio: {
-      type: String,
-    },
+    bio: String,
     expertise: {
       type: Array,
       default: [],
     },
-    profileImage: {
-      type: String,
+    profileImage: String,
+    employeeCount: Number,
+    recruiterName: String,
+    industry: String,
+    companysiteURL: String,
+    gst: String,
+    companyName: String,
+    experienceLevel: String,
+    graduateLevel: String,   
+    currentlyPursuing: {
+      type: Boolean,
+      default: false,        
     },
-    employeeCount: {
-      type: Number,
-    },
-    recruiterName: {
-      type: String,
-    },
-    industry: {
-      type: String,
-    },
-    companysiteURL: {
-      type: String,
-    },
-    gst: {
-      type: String,
-    },
-    companyName: {
-      type: String,
-    },
-    experienceLevel:{
-      type: String,
-    }
+    course: String,          
+    specialization: String,  
+    collegeInstitute: String,
+    yearOfStudy: String,     
+    startYear: String,       
+    endYear: String,         
+    internshipDuration: String, 
+    preferredWorkMode: String,   
+    areaOfInterest: String,     
+    linkedinUrl: String,        
+    githubUrl: String,          
+    resume: String,             
   },
   {
     timestamps: true,
