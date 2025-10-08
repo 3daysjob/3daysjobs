@@ -38,8 +38,25 @@ const updateJoblessUserById = async (req) => {
   }
 };
 
+const uploadResume = async (req) => {
+  const userId = req.params.id;
+  const updateBody = req.body;
+  let user = await getJoblessUserById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  const file = req.file;
+  if (file) {
+    const url = await uploadToR2(file.buffer, file.originalname, file.mimetype, 'profile');
+    user.resume = url;
+    await user.save();
+    return user;
+  }
+};
+
 module.exports = {
   createJoblessUser,
   getJoblessUserById,
   updateJoblessUserById,
+  uploadResume
 };

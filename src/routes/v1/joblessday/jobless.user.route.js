@@ -8,5 +8,5 @@ const upload = multer({ storage });
 
 router.route('/').post(JoblessUserController.createJoblessUser);
 router.route('/:id').put(upload.single('image'), JoblessUserController.updateJoblessUser).get(JoblessUserController.getJoblessUser);
-
+router.route('/resume/upload/:id').post(upload.single('file'),JoblessUserController.uploadResume)
 module.exports = router;

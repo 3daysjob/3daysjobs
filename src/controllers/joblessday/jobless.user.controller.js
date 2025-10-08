@@ -18,8 +18,14 @@ const updateJoblessUser = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send(user);
 });
 
+const uploadResume = catchAsync(async (req, res) => {
+  const user = await JoblessUserServices.uploadResume(req);
+  res.status(httpStatus.OK).send(user);
+});
+
 module.exports = {
   createJoblessUser,
   getJoblessUser,
   updateJoblessUser,
+  uploadResume,
 };
