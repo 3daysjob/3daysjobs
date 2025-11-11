@@ -3,6 +3,31 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { v4 } = require('uuid');
 
+const CompanySchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: uuidv4,
+  },
+  companyName: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  designation: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  startDate: {
+    type: String,
+    default: '',
+  },
+  endDate: {
+    type: String,
+    default: '',
+  },
+});
+
 const JoblessuserSchema = mongoose.Schema(
   {
     _id: {
@@ -64,6 +89,8 @@ const JoblessuserSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
+    companies: { type: [CompanySchema], default: [] },
+
     profileImage: String,
     employeeCount: Number,
     recruiterName: String,
