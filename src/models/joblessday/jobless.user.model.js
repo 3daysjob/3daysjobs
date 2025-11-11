@@ -89,7 +89,7 @@ const JoblessuserSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
-    companies: { type: [CompanySchema], default: [] },
+    companies: { type: Array, default: [] },
 
     profileImage: String,
     employeeCount: Number,
