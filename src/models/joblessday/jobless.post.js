@@ -46,7 +46,7 @@ const JoblesjobPostSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    postType:String,
+    postType: String,
     experience: {
       type: String,
     },
@@ -59,6 +59,7 @@ const JoblesjobPostSchema = mongoose.Schema(
     jobDescription: {
       type: String,
     },
+    salaryFrequency: String,
   },
   { timestamps: true }
 );
