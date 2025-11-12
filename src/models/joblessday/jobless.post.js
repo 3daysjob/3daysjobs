@@ -19,15 +19,18 @@ const JoblesjobPostSchema = mongoose.Schema(
     designation: {
       type: String,
     },
-    salaryfrom: {
+    salaryFrom: {
       type: Number,
     },
-    salaryto: {
+    salaryTo: {
       type: Number,
     },
-    worklocation: {
+    workLocation: {
       type: String,
     },
+    expFrom: String,
+    expTo: String,
+    jobType: String,
     step: {
       type: Number,
       default: 1,
@@ -58,7 +61,7 @@ const JoblesjobPostSchema = mongoose.Schema(
     date: {
       type: Date,
     },
-    description: {
+    jobDescription: {
       type: String,
     },
   },

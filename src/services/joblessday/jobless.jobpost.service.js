@@ -5,17 +5,25 @@ const moment = require('moment');
 const JoblessApplication = require('../../models/joblessday/joblessApplications.model');
 
 const createJobPost = async (req) => {
-  const userId = req.userId;
-  const { startTime, endTime } = req.body;
-  const istStartTime = moment.utc(startTime).add(5, 'hours').add(30, 'minutes').toDate();
-  const istEndTime = moment.utc(endTime).add(5, 'hours').add(30, 'minutes').toDate();
-  const creation = await JoblessJobPost.create({
-    ...req.body,
-    startTime: istStartTime,
-    endTime: istEndTime,
-    userId,
-  });
-  return creation;
+  try {
+    const userId = req.userId;
+    const { startTime, endTime } = req.body;
+
+    const istStartTime = moment(startTime).toDate();
+    const istEndTime = moment(endTime).toDate();
+
+    const creation = await JoblessJobPost.create({
+      ...req.body,
+      startTime: istStartTime,
+      endTime: istEndTime,
+      userId,
+    });
+
+    return creation;
+  } catch (error) {
+    console.error('Error creating job post:', error);
+    throw error;
+  }
 };
 
 const UpdateJobPost = async (req) => {
