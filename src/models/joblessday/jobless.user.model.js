@@ -3,32 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { v4 } = require('uuid');
 
-const CompanySchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    default: v4,
-  },
-  companyName: {
-    type: String,
-    trim: true,
-    default: '',
-  },
-  designation: {
-    type: String,
-    trim: true,
-    default: '',
-  },
-  startDate: {
-    type: String,
-    default: '',
-  },
-  endDate: {
-    type: String,
-    default: '',
-  },
-});
-
-const JoblessuserSchema = mongoose.Schema(
+const JoblessuserSchema = new mongoose.Schema(
   {
     _id: {
       type: String,
@@ -55,9 +30,7 @@ const JoblessuserSchema = mongoose.Schema(
       type: String,
       enum: ['recruiter', 'candidate'],
     },
-    password: {
-      type: String,
-    },
+    password: String,
     fullName: String,
     stepper: {
       type: Number,
@@ -89,15 +62,38 @@ const JoblessuserSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
-    companies: { type: Array, default: [] },
-
+    companies: {
+      type: Array,
+      default: [],
+    },
     profileImage: String,
-    employeeCount: Number,
-    recruiterName: String,
-    industry: String,
-    companysiteURL: String,
-    gst: String,
-    companyName: String,
+
+    // 🏢 --- Company / Recruiter Details ---
+    companyName: { type: String, trim: true },
+    companyEmail: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      validate: value => {
+        if (value && !validator.isEmail(value))
+          throw new Error('Invalid company email');
+      },
+    },
+    companyPhone: { type: String, trim: true },
+    companyAddress: { type: String, trim: true },
+    pinCode: { type: String, trim: true },
+    companyLinkedIn: { type: String, trim: true },
+    aboutCompany: { type: String, trim: true },
+    registrationNumber: { type: String, trim: true },
+    foundedYear: { type: String, trim: true },
+    country: { type: String, trim: true },
+    employeeCount: { type: Number },
+    recruiterName: { type: String, trim: true },
+    recruiterDesignation: { type: String, trim: true },
+    industry: { type: String, trim: true },
+    companysiteURL: { type: String, trim: true },
+    gst: { type: String, trim: true },
+
     experienceLevel: String,
     graduateLevel: String,
     currentlyPursuing: {
@@ -125,6 +121,7 @@ const JoblessuserSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
 
 /**
  * Check if email is taken
