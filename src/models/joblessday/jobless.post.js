@@ -46,12 +46,7 @@ const JoblesjobPostSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    startTime: {
-      type: Date,
-    },
-    endTime: {
-      type: Date,
-    },
+    postType:String,
     experience: {
       type: String,
     },

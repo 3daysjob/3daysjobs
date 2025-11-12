@@ -7,15 +7,8 @@ const JoblessApplication = require('../../models/joblessday/joblessApplications.
 const createJobPost = async (req) => {
   try {
     const userId = req.userId;
-    const { startTime, endTime } = req.body;
-
-    const istStartTime = moment(startTime).toDate();
-    const istEndTime = moment(endTime).toDate();
-
     const creation = await JoblessJobPost.create({
       ...req.body,
-      startTime: istStartTime,
-      endTime: istEndTime,
       userId,
     });
 
