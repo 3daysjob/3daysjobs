@@ -56,25 +56,15 @@ const fetchJobPost = async (req) => {
 };
 
 const fetchCurrentActiveJobs = async (req) => {
-  console.log(req.userId,"Candidate");
-  const userId = req.userId
-  const { page = 1, limit = 10, search = "" } = req.body;
+  console.log(req.userId, 'Candidate');
+  const userId = req.userId;
+  const { page = 1, limit = 10, search = '' } = req.body;
 
   const currentTime = new Date();
 
-  const startOfDay = new Date(
-    currentTime.getFullYear(),
-    currentTime.getMonth(),
-    currentTime.getDate(),
-    0, 0, 0, 0
-  );
+  const startOfDay = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), 0, 0, 0, 0);
 
-  const endOfDay = new Date(
-    currentTime.getFullYear(),
-    currentTime.getMonth(),
-    currentTime.getDate(),
-    23, 59, 59, 999
-  );
+  const endOfDay = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), 23, 59, 59, 999);
 
   const matchStage = {
     date: {
@@ -83,74 +73,81 @@ const fetchCurrentActiveJobs = async (req) => {
     },
   };
 
-  if (search.trim() !== "") {
-    matchStage.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } },
-    ];
+  if (search.trim() !== '') {
+    matchStage.$or = [{ title: { $regex: search, $options: 'i' } }, { description: { $regex: search, $options: 'i' } }];
   }
 
   const skip = (page - 1) * limit;
-
- const pipeline = [
-  // { $match: matchStage },
-  {
-    $lookup: {
-      from: "joblessusers",
-      localField: "userId",
-      foreignField: "_id",
-      as: "recruiters",
+  
+  const pipeline = [
+    // { $match: matchStage },
+    {
+      $lookup: {
+        from: 'joblessusers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'recruiters',
+      },
     },
-  },
-  { $unwind: "$recruiters" },
+    { $unwind: '$recruiters' },
 
-  /** Get ALL applications for this job */
-  {
-    $lookup: {
-      from: "joblessapplications",
-      localField: "_id",
-      foreignField: "jobId",
-      as: "allApplications"
-    }
-  },
+    {
+      $lookup: {
+        from: 'joblessapplications',
+        let: { jobId: '$_id' },
+        pipeline: [{ $match: { $expr: { $eq: ['$jobId', '$$jobId'] } } }, { $count: 'count' }],
+        as: 'applicationInfo',
+      },
+    },
 
-  /** Get ONLY current user's application */
-  {
-    $lookup: {
-      from: "joblessapplications",
-      let: { jobId: "$_id" },
-      pipeline: [
-        {
-          $match: {
-            $expr: {
-              $and: [
-                { $eq: ["$jobId", "$$jobId"] },
-                { $eq: ["$candidateId", userId] }
-              ]
-            }
-          }
-        }
-      ],
-      as: "myApplication"
-    }
-  },
-  {
-    $addFields: {
-      applicationCount: { $size: "$allApplications" },
-      isApplied: { $gt: [{ $size: "$myApplication" }, 0] }
-    }
-  },
+    {
+      $lookup: {
+        from: 'joblessapplications',
+        let: { jobId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [{ $eq: ['$jobId', '$$jobId'] }, { $eq: ['$candidateId', userId] }],
+              },
+            },
+          },
+          { $limit: 1 },
+        ],
+        as: 'myApplication',
+      },
+    },
 
-  { $sort: { date: -1 } },
+    {
+      $addFields: {
+        applicationCount: {
+          $ifNull: [{ $arrayElemAt: ['$applicationInfo.count', 0] }, 0],
+        },
+        isApplied: { $gt: [{ $size: '$myApplication' }, 0] },
+      },
+    },
 
-  { $skip: skip },
-  { $limit: parseInt(limit) },
-];
+    {
+      $project: {
+        applicationInfo: 0,
+        myApplication: 0,
+      },
+    },
 
+    {
+      $match: {
+        isApplied: { $ne: true },
+      },
+    },
+
+    { $sort: { date: -1 } },
+    { $skip: skip },
+    { $limit: parseInt(limit) },
+  ];
 
   const [jobs, totalCount] = await Promise.all([
     JoblessJobPost.aggregate(pipeline),
-    JoblessJobPost.countDocuments(matchStage), 
+    JoblessJobPost.countDocuments(matchStage),
   ]);
 
   return {
@@ -161,7 +158,6 @@ const fetchCurrentActiveJobs = async (req) => {
     data: jobs,
   };
 };
-
 
 const findjobById = async (req) => {
   const id = req.params.id;
