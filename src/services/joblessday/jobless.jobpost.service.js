@@ -57,55 +57,33 @@ const fetchJobPost = async (req) => {
 const fetchCurrentActiveJobs = async (req) => {
   const currentTime = new Date();
 
-  const validEnd = await JoblessJobPost.aggregate([
+  const startOfDay = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), 0, 0, 0, 0);
+
+  const endOfDay = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), 23, 59, 59, 999);
+
+  const todayPosts = await JoblessJobPost.aggregate([
     {
       $match: {
-        endTime: { $gte: currentTime },
+        date: {
+          $gte: startOfDay,
+          $lte: endOfDay,
+        },
       },
     },
     {
       $lookup: {
-        from: 'joblessapplications',
-        localField: '_id',
-        foreignField: 'jobId',
-        pipeline: [{ $match: { candidateId: req.userId } }],
-        as: 'jobPost',
-      },
-    },
-
-    {
-      $unwind: { preserveNullAndEmptyArrays: true, path: '$jobPost' },
-    },
-    {
-      $lookup: {
-        from: 'joblessapplications',
-        localField: '_id',
-        foreignField: 'jobId',
-        as: 'applications',
+        from: 'joblessusers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'recruiters',
       },
     },
     {
-      $addFields: {
-        applicationCount: { $size: '$applications' },
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        designation: 1,
-        salaryfrom: 1,
-        salaryto: 1,
-        openings: 1,
-        startTime: 1,
-        endTime: 1,
-        experience: 1,
-        applicationCount: 1,
-        status: '$jobPost.status',
-        status: { $ifNull: ['$jobPost.status', null] },
-      },
+      $unwind: '$recruiters',
     },
   ]);
-  return validEnd;
+
+  return todayPosts;
 };
 
 const findjobById = async (req) => {
