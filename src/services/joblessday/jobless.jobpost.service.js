@@ -3,6 +3,7 @@ const ApiError = require('../../utils/ApiError');
 const JoblessJobPost = require('../../models/joblessday/jobless.post');
 const moment = require('moment');
 const JoblessApplication = require('../../models/joblessday/joblessApplications.model');
+const { pipeline } = require('nodemailer/lib/xoauth2');
 
 const createJobPost = async (req) => {
   try {
@@ -55,6 +56,8 @@ const fetchJobPost = async (req) => {
 };
 
 const fetchCurrentActiveJobs = async (req) => {
+  console.log(req.userId,"Candidate");
+  const userId = req.userId
   const { page = 1, limit = 10, search = "" } = req.body;
 
   const currentTime = new Date();
@@ -84,31 +87,66 @@ const fetchCurrentActiveJobs = async (req) => {
     matchStage.$or = [
       { title: { $regex: search, $options: "i" } },
       { description: { $regex: search, $options: "i" } },
-      // add more fields if needed
     ];
   }
 
   const skip = (page - 1) * limit;
 
-  const pipeline = [
-    { $match: matchStage },
-
-    {
-      $lookup: {
-        from: "joblessusers",
-        localField: "userId",
-        foreignField: "_id",
-        as: "recruiters",
-      },
+ const pipeline = [
+  // { $match: matchStage },
+  {
+    $lookup: {
+      from: "joblessusers",
+      localField: "userId",
+      foreignField: "_id",
+      as: "recruiters",
     },
-    { $unwind: "$recruiters" },
+  },
+  { $unwind: "$recruiters" },
 
-    { $sort: { date: -1 } },
+  /** Get ALL applications for this job */
+  {
+    $lookup: {
+      from: "joblessapplications",
+      localField: "_id",
+      foreignField: "jobId",
+      as: "allApplications"
+    }
+  },
 
-    // Pagination
-    { $skip: skip },
-    { $limit: parseInt(limit) },
-  ];
+  /** Get ONLY current user's application */
+  {
+    $lookup: {
+      from: "joblessapplications",
+      let: { jobId: "$_id" },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $and: [
+                { $eq: ["$jobId", "$$jobId"] },
+                { $eq: ["$candidateId", userId] }
+              ]
+            }
+          }
+        }
+      ],
+      as: "myApplication"
+    }
+  },
+  {
+    $addFields: {
+      applicationCount: { $size: "$allApplications" },
+      isApplied: { $gt: [{ $size: "$myApplication" }, 0] }
+    }
+  },
+
+  { $sort: { date: -1 } },
+
+  { $skip: skip },
+  { $limit: parseInt(limit) },
+];
+
 
   const [jobs, totalCount] = await Promise.all([
     JoblessJobPost.aggregate(pipeline),
