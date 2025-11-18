@@ -13,7 +13,7 @@ router
   .get(JoblessPostController.findjobById)
   .delete(JoblessPostController.deteJobPost);
 router.route('/fetch/posts').post(JoblessAuth, JoblessPostController.fetchJobPost);
-router.route('/fetch/current/activejobs').post(JoblessPostController.fetchCurrentActiveJobs);
+router.route('/fetch/current/activejobs').post(JoblessAuth,JoblessPostController.fetchCurrentActiveJobs);
 router.route('/application/status/update/common').post(JoblessPostController.ApplyJob);
 router.route('/get/applied/candidates/byrecruiter').post(JoblessAuth, JoblessPostController.getAppliedCandidatesByRecruiter);
 router.route('/blind/fetch/:id').get(JoblessAuth, JoblessPostController.blindfetchById);

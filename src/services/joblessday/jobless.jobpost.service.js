@@ -80,7 +80,6 @@ const fetchCurrentActiveJobs = async (req) => {
     },
   };
 
-  // Add search filter (optional)
   if (search.trim() !== "") {
     matchStage.$or = [
       { title: { $regex: search, $options: "i" } },
@@ -94,7 +93,6 @@ const fetchCurrentActiveJobs = async (req) => {
   const pipeline = [
     { $match: matchStage },
 
-    // Join recruiter info
     {
       $lookup: {
         from: "joblessusers",
@@ -105,7 +103,6 @@ const fetchCurrentActiveJobs = async (req) => {
     },
     { $unwind: "$recruiters" },
 
-    // Sort latest jobs first
     { $sort: { date: -1 } },
 
     // Pagination
@@ -115,7 +112,7 @@ const fetchCurrentActiveJobs = async (req) => {
 
   const [jobs, totalCount] = await Promise.all([
     JoblessJobPost.aggregate(pipeline),
-    JoblessJobPost.countDocuments(matchStage), // count before pagination
+    JoblessJobPost.countDocuments(matchStage), 
   ]);
 
   return {
