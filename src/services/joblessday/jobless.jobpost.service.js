@@ -55,36 +55,78 @@ const fetchJobPost = async (req) => {
 };
 
 const fetchCurrentActiveJobs = async (req) => {
+  const { page = 1, limit = 10, search = "" } = req.body;
+
   const currentTime = new Date();
 
-  const startOfDay = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), 0, 0, 0, 0);
+  const startOfDay = new Date(
+    currentTime.getFullYear(),
+    currentTime.getMonth(),
+    currentTime.getDate(),
+    0, 0, 0, 0
+  );
 
-  const endOfDay = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), 23, 59, 59, 999);
+  const endOfDay = new Date(
+    currentTime.getFullYear(),
+    currentTime.getMonth(),
+    currentTime.getDate(),
+    23, 59, 59, 999
+  );
 
-  const todayPosts = await JoblessJobPost.aggregate([
-    {
-      $match: {
-        date: {
-          $gte: startOfDay,
-          $lte: endOfDay,
-        },
-      },
+  const matchStage = {
+    date: {
+      $gte: startOfDay,
+      $lte: endOfDay,
     },
+  };
+
+  // Add search filter (optional)
+  if (search.trim() !== "") {
+    matchStage.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { description: { $regex: search, $options: "i" } },
+      // add more fields if needed
+    ];
+  }
+
+  const skip = (page - 1) * limit;
+
+  const pipeline = [
+    { $match: matchStage },
+
+    // Join recruiter info
     {
       $lookup: {
-        from: 'joblessusers',
-        localField: 'userId',
-        foreignField: '_id',
-        as: 'recruiters',
+        from: "joblessusers",
+        localField: "userId",
+        foreignField: "_id",
+        as: "recruiters",
       },
     },
-    {
-      $unwind: '$recruiters',
-    },
+    { $unwind: "$recruiters" },
+
+    // Sort latest jobs first
+    { $sort: { date: -1 } },
+
+    // Pagination
+    { $skip: skip },
+    { $limit: parseInt(limit) },
+  ];
+
+  const [jobs, totalCount] = await Promise.all([
+    JoblessJobPost.aggregate(pipeline),
+    JoblessJobPost.countDocuments(matchStage), // count before pagination
   ]);
 
-  return todayPosts;
+  return {
+    page: Number(page),
+    limit: Number(limit),
+    totalPages: Math.ceil(totalCount / limit),
+    totalCount,
+    data: jobs,
+  };
 };
+
 
 const findjobById = async (req) => {
   const id = req.params.id;
